@@ -1,0 +1,10 @@
+<h2>{{ isEdit ? 'Editar' : 'Novo' }} CEP</h2>
+<form (ngSubmit)="onSubmit()">
+  <div>
+    <label for="numerocep">Número do CEP:</label>
+    <input type="text" id="numerocep" [(ngModel)]="cep.numerocep" name="numerocep" required />
+  </div>
+
+  <button type="submit">{{ isEdit ? 'Atualizar' : 'Salvar' }}</button>
+  <a routerLink="/ceps" class="btn btn-cancel">Cancelar</a>
+</form>

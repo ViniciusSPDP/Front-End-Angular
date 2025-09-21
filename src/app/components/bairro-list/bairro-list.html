@@ -1,0 +1,21 @@
+<h2>Lista de Bairros</h2>
+<a routerLink="/bairros/novo" class="btn btn-primary">Novo Bairro</a>
+<table>
+  <thead>
+    <tr>
+      <th>Código</th>
+      <th>Nome</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let bairro of bairros">
+      <td>{{ bairro.codbairro }}</td>
+      <td>{{ bairro.nomebairro }}</td>
+      <td>
+        <a [routerLink]="['/bairros/editar', bairro.codbairro]" class="btn btn-edit">Editar</a>
+        <button (click)="deleteBairro(bairro.codbairro!)" class="btn btn-delete">Excluir</button>
+      </td>
+    </tr>
+  </tbody>
+</table>

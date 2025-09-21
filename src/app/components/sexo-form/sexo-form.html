@@ -1,0 +1,10 @@
+<h2>{{ isEdit ? 'Editar' : 'Novo' }} Sexo</h2>
+<form (ngSubmit)="onSubmit()">
+  <div>
+    <label for="nomesexo">Nome do Sexo:</label>
+    <input type="text" id="nomesexo" [(ngModel)]="sexo.nomesexo" name="nomesexo" required />
+  </div>
+
+  <button type="submit">{{ isEdit ? 'Atualizar' : 'Salvar' }}</button>
+  <a routerLink="/sexos" class="btn btn-cancel">Cancelar</a>
+</form>

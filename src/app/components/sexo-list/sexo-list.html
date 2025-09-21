@@ -1,0 +1,21 @@
+<h2>Lista de Sexos</h2>
+<a routerLink="/sexos/novo" class="btn btn-primary">Novo Sexo</a>
+<table>
+  <thead>
+    <tr>
+      <th>Código</th>
+      <th>Nome</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let sexo of sexos">
+      <td>{{ sexo.codsexo }}</td>
+      <td>{{ sexo.nomesexo }}</td>
+      <td>
+        <a [routerLink]="['/sexos/editar', sexo.codsexo]" class="btn b tn-edit">Editar</a>
+        <button (click)="deleteSexo(sexo.codsexo!)" class="btn btn-del ete">Excluir</button>
+      </td>
+    </tr>
+  </tbody>
+</table>

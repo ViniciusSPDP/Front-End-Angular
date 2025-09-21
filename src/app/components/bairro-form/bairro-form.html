@@ -1,0 +1,10 @@
+<h2>{{ isEdit ? 'Editar' : 'Novo' }} Bairro</h2>
+<form (ngSubmit)="onSubmit()">
+ <div>
+ <label for="nomebairro">Nome do Bairro:</label>
+ <input type="text" id="nomebairro" [(ngModel)]="bairro.nomebairro" name="nomebairro" required>
+ </div>
+
+ <button type="submit">{{ isEdit ? 'Atualizar' : 'Salvar' }}</button>
+ <a routerLink="/bairros" class="btn btn-cancel">Cancelar</a>
+</form>
