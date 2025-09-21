@@ -1,0 +1,23 @@
+<h2>Lista de UFs</h2>
+<a routerLink="/ufs/novo" class="btn btn-primary">Nova UF</a>
+<table>
+  <thead>
+    <tr>
+      <th>Código</th>
+      <th>Nome da UF</th>
+      <th>Sigla</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let uf of ufs">
+      <td>{{ uf.coduf }}</td>
+      <td>{{ uf.nomeuf }}</td>
+      <td>{{ uf.siglauf }}</td>
+      <td>
+        <a [routerLink]="['/ufs/editar', uf.coduf]" class="btn btn-edit">Editar</a>
+        <button (click)="deleteUf(uf.coduf!)" class="btn btn-delete">Excluir</button>
+      </td>
+    </tr>
+  </tbody>
+</table>

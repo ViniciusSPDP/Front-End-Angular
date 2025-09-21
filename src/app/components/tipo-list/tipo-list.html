@@ -1,0 +1,21 @@
+<h2>Lista de Tipos</h2>
+<a routerLink="/tipos/novo" class="btn btn-primary">Novo Tipo</a>
+<table>
+  <thead>
+    <tr>
+      <th>Código</th>
+      <th>Nome do Tipo</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let tipo of tipos">
+      <td>{{ tipo.codtipo }}</td>
+      <td>{{ tipo.nometipo }}</td>
+      <td>
+        <a [routerLink]="['/tipos/editar', tipo.codtipo]" class="btn btn-edit">Editar</a>
+        <button (click)="deleteTipo(tipo.codtipo!)" class="btn btn-delete">Excluir</button>
+      </td>
+    </tr>
+  </tbody>
+</table>

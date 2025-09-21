@@ -1,0 +1,21 @@
+<h2>Lista de Ruas</h2>
+<a routerLink="/ruas/novo" class="btn btn-primary">Nova Rua</a>
+<table>
+  <thead>
+    <tr>
+      <th>Código</th>
+      <th>Nome da Rua</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let rua of ruas">
+      <td>{{ rua.codrua }}</td>
+      <td>{{ rua.nomerua }}</td>
+      <td>
+        <a [routerLink]="['/ruas/editar', rua.codrua]" class="btn btn-edit">Editar</a>
+        <button (click)="deleteRua(rua.codrua!)" class="btn btn-delete">Excluir</button>
+      </td>
+    </tr>
+  </tbody>
+</table>

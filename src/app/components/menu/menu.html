@@ -1,10 +1,29 @@
-<nav>
+<nav class="mega-menu">
   <ul>
-    <li><a routerLink="/sexos" routerLinkActive="active">Lista de Sexos</a></li>
-    <li><a routerLink="/sexos/novo" routerLinkActive="active">Novo Sexo</a></li>
-    <li><a routerLink="/bairros" routerLinkActive="active">Lista de Bairros</a></li>
-    <li><a routerLink="/bairros/novo" routerLinkActive="active">Novo Bairro</a></li>
-    <li><a routerLink="/ceps" routerLinkActive="active">Lista de Ceps</a></li>
-    <li><a routerLink="/ceps/novo" routerLinkActive="active">Novo Cep</a></li>
-  </ul>
+    <li class="dropdown">
+      <a class="dropbtn">Cadastros</a>
+      <div class="dropdown-content">
+        
+        <div class="dropdown-column">
+          <h3>Endereços</h3>
+          <a routerLink="/bairros" routerLinkActive="active">Bairros</a>
+          <a routerLink="/ceps" routerLinkActive="active">CEPs</a>
+          <a routerLink="/ruas" routerLinkActive="active">Ruas</a>
+          <a routerLink="/ufs" routerLinkActive="active">UFs</a>
+        </div>
+
+        <div class="dropdown-column">
+          <h3>Produtos</h3>
+          <a routerLink="/marcas" routerLinkActive="active">Marcas</a>
+          <a routerLink="/tipos" routerLinkActive="active">Tipos</a>
+        </div>
+
+        <div class="dropdown-column">
+          <h3>Outros</h3>
+          <a routerLink="/sexos" routerLinkActive="active">Sexos</a>
+        </div>
+
+      </div>
+    </li>
+    </ul>
 </nav>

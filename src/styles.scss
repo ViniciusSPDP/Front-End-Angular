@@ -107,3 +107,101 @@ input[type="text"] {
   padding: 8px;
   box-sizing: border-box;
 }
+
+
+/* ESTILOS PARA O MEGA MENU */
+
+/* Remove o estilo padrão da lista principal */
+.mega-menu ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #f2f2f2;
+}
+
+.mega-menu li {
+  float: left;
+}
+
+/* Estilo do botão principal do dropdown */
+.mega-menu li a.dropbtn {
+  display: inline-block;
+  color: #333;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.mega-menu li a:hover, .dropdown:hover .dropbtn {
+  background-color: #ddd;
+}
+
+/* Container do dropdown */
+li.dropdown {
+  display: inline-block;
+}
+
+/* O conteúdo do dropdown (escondido por padrão) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 400px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  border-top: 3px solid #007bff;
+  padding: 20px;
+  left: 0;
+  display: none; /* Duplicado para garantir, será sobrescrito no hover */
+  flex-direction: row;
+  gap: 20px;
+}
+
+/* Mostra o dropdown ao passar o mouse */
+.dropdown:hover .dropdown-content {
+  display: flex;
+}
+
+/* Colunas dentro do dropdown */
+.dropdown-column {
+  flex: 1;
+}
+
+.dropdown-column h3 {
+  margin-top: 0;
+  color: #0056b3;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 5px;
+}
+
+/* Links dentro do dropdown */
+.dropdown-content a {
+  color: black;
+  padding: 8px 0;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+.dropdown-content a:hover {
+  background-color: #f1f1f1;
+}
+
+/* Estilo do link ativo dentro do dropdown */
+.dropdown-content a.active {
+  font-weight: bold;
+  color: #0056b3;
+}
+
+/* Removemos o estilo antigo que não é mais necessário */
+nav ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+nav ul li {
+  display: inline;
+  margin-right: 10px;
+}
