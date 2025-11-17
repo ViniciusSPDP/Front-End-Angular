@@ -1,0 +1,60 @@
+<h2>{{ isEdit ? 'Editar' : 'Novo' }} Cliente</h2>
+<form (ngSubmit)="onSubmit()">
+
+  <div>
+    <label for="nomecliente">Nome:</label>
+    <input type="text" id="nomecliente" [(ngModel)]="cliente.nomecliente" name="nomecliente" required>
+  </div>
+  <div>
+    <label for="cpf">CPF:</label>
+    <input type="text" id="cpf" [(ngModel)]="cliente.cpf" name="cpf" required>
+  </div>
+  <div>
+    <label for="datanasc">Data de Nascimento:</label>
+    <input type="date" id="datanasc" [(ngModel)]="cliente.datanasc" name="datanasc" required>
+  </div>
+  <div>
+    <label for="sexo">Sexo:</label>
+    <select id="sexo" [(ngModel)]="cliente.sexo.codsexo" name="sexo" required>
+      <option [ngValue]="undefined" disabled>Selecione...</option>
+      <option *ngFor="let s of sexos" [value]="s.codsexo">{{ s.nomesexo }}</option>
+    </select>
+  </div>
+
+  <div>
+    <label for="cidade">Cidade:</label>
+    <select id="cidade" [(ngModel)]="cliente.cidade.codcidade" name="cidade" required>
+      <option [ngValue]="undefined" disabled>Selecione...</option>
+      <option *ngFor="let c of cidades" [value]="c.codcidade">{{ c.nomecidade }} / {{c.uf.siglauf}}</option>
+    </select>
+  </div>
+  <div>
+    <label for="bairro">Bairro:</label>
+    <select id="bairro" [(ngModel)]="cliente.bairro.codbairro" name="bairro" required>
+      <option [ngValue]="undefined" disabled>Selecione...</option>
+      <option *ngFor="let b of bairros" [value]="b.codbairro">{{ b.nomebairro }}</option>
+    </select>
+  </div>
+  <div>
+    <label for="rua">Rua:</label>
+    <select id="rua" [(ngModel)]="cliente.rua.codrua" name="rua" required>
+      <option [ngValue]="undefined" disabled>Selecione...</option>
+      <option *ngFor="let r of ruas" [value]="r.codrua">{{ r.nomerua }}</option>
+    </select>
+  </div>
+   <div>
+    <label for="cep">CEP:</label>
+    <select id="cep" [(ngModel)]="cliente.cep.codcep" name="cep" required>
+      <option [ngValue]="undefined" disabled>Selecione...</option>
+      <option *ngFor="let c of ceps" [value]="c.codcep">{{ c.numerocep }}</option>
+    </select>
+  </div>
+  <div>
+    <label for="numerocasa">Número da Casa:</label>
+    <input type="text" id="numerocasa" [(ngModel)]="cliente.numerocasa" name="numerocasa" required>
+  </div>
+ 
+
+  <button type="submit">{{ isEdit ? 'Atualizar' : 'Salvar' }}</button>
+  <a routerLink="/clientes" class="btn btn-cancel">Cancelar</a>
+</form>

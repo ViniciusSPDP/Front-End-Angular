@@ -15,6 +15,12 @@ import { TipoFormComponent } from './components/tipo-form/tipo-form';
 import { TipoListComponent } from './components/tipo-list/tipo-list';
 import { UfFormComponent } from './components/uf-form/uf-form';
 import { UfListComponent } from './components/uf-list/uf-list';
+import { CidadeListComponent } from './components/cidade-list/cidade-list';
+import { CidadeFormComponent } from './components/cidade-form/cidade-form';
+import { ClienteFormComponent } from './components/cliente-form/cliente-form';
+import { ClienteListComponent } from './components/cliente-list/cliente-list';
+import { ProdutoFormComponent } from './components/produto-form/produto-form';
+import { ProdutoListComponent } from './components/produto-list/produto-list';
 
 
 export const routes: Routes = [
@@ -46,6 +52,18 @@ export const routes: Routes = [
  { path: 'ufs', component: UfListComponent },
  { path: 'ufs/novo', component: UfFormComponent },
  { path: 'ufs/editar/:id', component: UfFormComponent },
+
+ { path: 'cidades', component: CidadeListComponent },
+ { path: 'cidades/novo', component: CidadeFormComponent },
+ { path: 'cidades/editar/:id', component: CidadeFormComponent },
+
+ { path: 'clientes', component: ClienteListComponent },
+ { path: 'clientes/novo', component: ClienteFormComponent },
+ { path: 'clientes/editar/:id', component: ClienteFormComponent },
+
+ { path: 'produtos', component: ProdutoListComponent },
+ { path: 'produtos/novo', component: ProdutoFormComponent },
+ { path: 'produtos/editar/:id', component: ProdutoFormComponent },
 
  { path: '', redirectTo: '/sexos', pathMatch: 'full' },
 ];  

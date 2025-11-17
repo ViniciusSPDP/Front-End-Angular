@@ -1,0 +1,24 @@
+<h2>Lista de Cidades</h2>
+
+<a routerLink="/cidades/novo" class="btn btn-primary">Nova Cidade</a>
+<table>
+  <thead>
+    <tr>
+      <th>Código</th>
+      <th>Nome da Cidade</th>
+      <th>UF</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let cidade of cidades">
+      <td>{{ cidade.codcidade }}</td>
+      <td>{{ cidade.nomecidade }}</td>
+      <td>{{ cidade.uf.siglauf }}</td>
+      <td>
+        <a [routerLink]="['/cidades/editar', cidade.codcidade]" class="btn btn-edit">Editar</a>
+        <button (click)="deleteCidade(cidade.codcidade!)" class="btn btn-delete">Excluir</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
