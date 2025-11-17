@@ -1,34 +1,27 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
+
 import { ClienteService, Cliente } from '../../services/cliente';
 import { SexoService, Sexo } from '../../services/sexo';
 import { BairroService, Bairro } from '../../services/bairro';
 import { CidadeService, Cidade } from '../../services/cidade';
 import { RuaService, Rua } from '../../services/rua';
 import { CepService, Cep } from '../../services/cep';
+import { MaterialModule } from '../../material.module';
 
 @Component({
   selector: 'app-cliente-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, MaterialModule],
   templateUrl: './cliente-form.html',
-  styleUrls: ['./cliente-form.scss'] 
+  styleUrls: ['./cliente-form.scss']
 })
 export class ClienteFormComponent implements OnInit {
 
-  cliente: Cliente = {
-    nomecliente: '',
-    cpf: '',
-    datanasc: '', 
-    numerocasa: '',
-    sexo: {} as Sexo,
-    bairro: {} as Bairro,
-    cidade: {} as Cidade,
-    rua: {} as Rua,
-    cep: {} as Cep
-  };
+  form: FormGroup;
   
   sexos: Sexo[] = [];
   bairros: Bairro[] = [];
@@ -37,8 +30,10 @@ export class ClienteFormComponent implements OnInit {
   ceps: Cep[] = [];
 
   isEdit = false;
+  clienteId: number | null = null;
 
   constructor(
+    private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
     private clienteService: ClienteService,
@@ -46,8 +41,21 @@ export class ClienteFormComponent implements OnInit {
     private bairroService: BairroService,
     private cidadeService: CidadeService,
     private ruaService: RuaService,
-    private cepService: CepService
-  ) { }
+    private cepService: CepService,
+    private snackBar: MatSnackBar
+  ) {
+    this.form = this.fb.group({
+      nomecliente: ['', Validators.required],
+      cpf: ['', Validators.required],
+      datanasc: ['', Validators.required],
+      numerocasa: ['', Validators.required],
+      sexo: [null, Validators.required],
+      bairro: [null, Validators.required],
+      cidade: [null, Validators.required],
+      rua: [null, Validators.required],
+      cep: [null, Validators.required]
+    });
+  }
 
   ngOnInit(): void {
     this.loadSexos();
@@ -59,13 +67,18 @@ export class ClienteFormComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.isEdit = true;
-      this.clienteService.getCliente(+id).subscribe(
+      this.clienteId = +id;
+      this.clienteService.getCliente(this.clienteId).subscribe(
         data => {
-          this.cliente = data;
-
-          if (data.datanasc) {
-            this.cliente.datanasc = new Date(data.datanasc).toISOString().split('T')[0];
-          }
+          this.form.patchValue({
+            ...data,
+            datanasc: new Date(data.datanasc).toISOString().split('T')[0],
+            sexo: data.sexo.codsexo,
+            bairro: data.bairro.codbairro,
+            cidade: data.cidade.codcidade,
+            rua: data.rua.codrua,
+            cep: data.cep.codcep
+          });
         },
         error => console.error('Erro ao carregar Cliente', error)
       );
@@ -89,23 +102,36 @@ export class ClienteFormComponent implements OnInit {
   }
 
   onSubmit(): void {
+    if (this.form.invalid) {
+      this.snackBar.open('Por favor, preencha todos os campos obrigatórios.', 'Fechar', { duration: 3000 });
+      return;
+    }
 
-    this.cliente.sexo = { codsexo: this.cliente.sexo.codsexo } as Sexo;
-    this.cliente.bairro = { codbairro: this.cliente.bairro.codbairro } as Bairro;
-    this.cliente.cidade = { codcidade: this.cliente.cidade.codcidade } as Cidade;
-    this.cliente.rua = { codrua: this.cliente.rua.codrua } as Rua;
-    this.cliente.cep = { codcep: this.cliente.cep.codcep } as Cep;
+    const formValue = this.form.value;
+    const cliente: Cliente = {
+      ...formValue,
+      codcliente: this.clienteId,
+      sexo: { codsexo: formValue.sexo },
+      bairro: { codbairro: formValue.bairro },
+      cidade: { codcidade: formValue.cidade },
+      rua: { codrua: formValue.rua },
+      cep: { codcep: formValue.cep }
+    };
+
+    const successAction = () => {
+      this.snackBar.open(`Cliente ${this.isEdit ? 'atualizado' : 'criado'} com sucesso!`, 'Fechar', { duration: 3000 });
+      this.router.navigate(['/clientes']);
+    };
+
+    const errorAction = (error: any) => {
+      console.error(`Erro ao ${this.isEdit ? 'atualizar' : 'criar'} Cliente`, error);
+      this.snackBar.open(`Erro ao ${this.isEdit ? 'atualizar' : 'criar'} cliente.`, 'Fechar', { duration: 3000 });
+    };
 
     if (this.isEdit) {
-      this.clienteService.updateCliente(this.cliente.codcliente!, this.cliente).subscribe(
-        () => this.router.navigate(['/clientes']),
-        error => console.error('Erro ao atualizar Cliente', error)
-      );
+      this.clienteService.updateCliente(this.clienteId!, cliente).subscribe(successAction, errorAction);
     } else {
-      this.clienteService.createCliente(this.cliente).subscribe(
-        () => this.router.navigate(['/clientes']),
-        error => console.error('Erro ao criar Cliente', error)
-      );
+      this.clienteService.createCliente(cliente).subscribe(successAction, errorAction);
     }
   }
 }

@@ -1,19 +1,28 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule, DatePipe, CurrencyPipe } from '@angular/common'; // Imports para formatação
+import { CommonModule, DatePipe, CurrencyPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { VendaService, Venda } from '../../services/vendas'; // Importando o novo serviço
+import { VendaService, Venda } from '../../services/vendas';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog';
+import { MaterialModule } from '../../material.module';
 
 @Component({
   selector: 'app-venda-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, DatePipe, CurrencyPipe], // Adicionando os Pipes
+  imports: [CommonModule, RouterLink, DatePipe, CurrencyPipe, MaterialModule],
   templateUrl: './venda-list.html',
   styleUrls: ['./venda-list.scss']
 })
 export class VendaListComponent implements OnInit {
   vendas: Venda[] = [];
+  displayedColumns: string[] = ['codvenda', 'datavenda', 'cliente', 'produtos', 'valorTotal', 'acoes'];
 
-  constructor(private vendaService: VendaService) { }
+  constructor(
+    private vendaService: VendaService,
+    public dialog: MatDialog,
+    private snackBar: MatSnackBar
+  ) { }
 
   ngOnInit(): void {
     this.loadVendas();
@@ -27,15 +36,33 @@ export class VendaListComponent implements OnInit {
   }
 
   deleteVenda(id: number): void {
-    if(confirm('Tem certeza que deseja excluir esta venda? O estoque dos produtos será estornado.')) {
-      this.vendaService.deleteVenda(id).subscribe(
-        () => this.loadVendas(),
-        error => console.error('Erro ao excluir Venda', error)
-      );
-    }
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Confirmar Exclusão',
+        message: 'Tem certeza que deseja excluir esta venda? O estoque dos produtos será estornado.'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.vendaService.deleteVenda(id).subscribe(
+          () => {
+            this.loadVendas();
+            this.snackBar.open('Venda excluída com sucesso!', 'Fechar', {
+              duration: 3000,
+            });
+          },
+          error => {
+            console.error('Erro ao excluir Venda', error);
+            this.snackBar.open('Erro ao excluir venda.', 'Fechar', {
+              duration: 3000,
+            });
+          }
+        );
+      }
+    });
   }
 
-  // Função auxiliar para calcular o total da venda para exibição na lista
   calcularTotalVenda(venda: Venda): number {
     if (!venda.produtos) {
       return 0;

@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 // Serviços
 import { VendaService, VendaForm, VendaProdutoForm } from '../../services/vendas';
 import { Cliente, ClienteService } from '../../services/cliente';
 import { Produto, ProdutoService } from '../../services/produto';
+import { MaterialModule } from '../../material.module';
 
 interface ItemVendaTela {
   produto: Produto;
@@ -17,34 +19,43 @@ interface ItemVendaTela {
 @Component({
   selector: 'app-venda-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, CurrencyPipe],
+  imports: [CommonModule, FormsModule, RouterLink, CurrencyPipe, MaterialModule, ReactiveFormsModule],
   templateUrl: './venda-form.html',
   styleUrls: ['./venda-form.scss']
 })
 export class VendaFormComponent implements OnInit {
 
-  vendaForm: { clienteId?: number } = {}; 
+  form: FormGroup;
+  itemForm: FormGroup;
   
   clientes: Cliente[] = [];
   produtos: Produto[] = [];
-
-
-  itemForm: { produtoId?: number, quantidade: number, valor: number } = {
-    quantidade: 1,
-    valor: 0
-  };
+  
   itensVenda: ItemVendaTela[] = [];
+  displayedColumns: string[] = ['produto', 'quantidade', 'valor', 'subtotal', 'acao'];
 
   isEdit = false;
   vendaId: number | null = null;
 
   constructor(
+    private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
     private vendaService: VendaService,
     private clienteService: ClienteService,
-    private produtoService: ProdutoService
-  ) { }
+    private produtoService: ProdutoService,
+    private snackBar: MatSnackBar
+  ) {
+    this.form = this.fb.group({
+      clienteId: [null, Validators.required]
+    });
+
+    this.itemForm = this.fb.group({
+      produtoId: [null, Validators.required],
+      quantidade: [1, [Validators.required, Validators.min(1)]],
+      valor: [0, [Validators.required, Validators.min(0)]]
+    });
+  }
 
   ngOnInit(): void {
     this.loadClientes();
@@ -56,7 +67,7 @@ export class VendaFormComponent implements OnInit {
       this.vendaId = +id;
       
       this.vendaService.getVenda(this.vendaId).subscribe(data => {
-        this.vendaForm.clienteId = data.cliente.codcliente;
+        this.form.patchValue({ clienteId: data.cliente.codcliente });
         
         this.itensVenda = data.produtos.map(vp => ({
           produto: vp.produto,
@@ -65,6 +76,15 @@ export class VendaFormComponent implements OnInit {
         }));
       });
     }
+
+    this.itemForm.get('produtoId')?.valueChanges.subscribe(produtoId => {
+      if (produtoId) {
+        const produtoSelecionado = this.produtos.find(p => p.codproduto == produtoId);
+        if (produtoSelecionado) {
+          this.itemForm.patchValue({ valor: produtoSelecionado.valor });
+        }
+      }
+    });
   }
 
   loadClientes(): void {
@@ -75,48 +95,36 @@ export class VendaFormComponent implements OnInit {
     this.produtoService.getProdutos().subscribe(data => this.produtos = data);
   }
 
-  
-  onProdutoSelecionado(): void {
-    if (this.itemForm.produtoId) {
-      const produtoSelecionado = this.produtos.find(p => p.codproduto == this.itemForm.produtoId);
-      if (produtoSelecionado) {
-        this.itemForm.valor = produtoSelecionado.valor;
-      }
-    }
-  }
-
   adicionarItem(): void {
-    if (!this.itemForm.produtoId) { 
-      alert('Selecione um produto.');
+    if (this.itemForm.invalid) {
+      this.snackBar.open('Preencha os dados do item corretamente.', 'Fechar', { duration: 3000 });
       return;
     }
 
-    const produtoSelecionado = this.produtos.find(p => p.codproduto == this.itemForm.produtoId);
+    const { produtoId, quantidade, valor } = this.itemForm.value;
+    const produtoSelecionado = this.produtos.find(p => p.codproduto == produtoId);
+
     if (!produtoSelecionado) {
-      alert('Produto selecionado não é válido.');
+      this.snackBar.open('Produto selecionado não é válido.', 'Fechar', { duration: 3000 });
       return;
     }
 
-    if (this.itemForm.quantidade <= 0) {
-      alert('A quantidade deve ser maior que zero.');
-      return;
-    }
-    if (this.itemForm.quantidade > produtoSelecionado.quantidade) {
-      alert(`Quantidade insuficiente em estoque. Disponível: ${produtoSelecionado.quantidade}`);
+    if (quantidade > produtoSelecionado.quantidade) {
+      this.snackBar.open(`Quantidade insuficiente em estoque. Disponível: ${produtoSelecionado.quantidade}`, 'Fechar', { duration: 3000 });
       return;
     }
 
     this.itensVenda.push({
       produto: produtoSelecionado,
-      quantidade: this.itemForm.quantidade,
-      valor: this.itemForm.valor
+      quantidade: quantidade,
+      valor: valor
     });
 
-    this.itemForm = {
-      produtoId: undefined, 
+    this.itemForm.reset({
+      produtoId: null,
       quantidade: 1,
       valor: 0
-    };
+    });
   }
 
   removerItem(index: number): void {
@@ -128,12 +136,12 @@ export class VendaFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (!this.vendaForm.clienteId) {
-      alert('Selecione um cliente.');
+    if (this.form.invalid) {
+      this.snackBar.open('Selecione um cliente.', 'Fechar', { duration: 3000 });
       return;
     }
     if (this.itensVenda.length === 0) {
-      alert('A venda deve conter pelo menos um produto.'); 
+      this.snackBar.open('A venda deve conter pelo menos um produto.', 'Fechar', { duration: 3000 });
       return;
     }
 
@@ -144,20 +152,24 @@ export class VendaFormComponent implements OnInit {
     }));
 
     const vendaParaSalvar: VendaForm = {
-      clienteId: this.vendaForm.clienteId!,
+      clienteId: this.form.value.clienteId,
       produtos: produtosForm
     };
 
+    const successAction = () => {
+      this.snackBar.open(`Venda ${this.isEdit ? 'atualizada' : 'criada'} com sucesso!`, 'Fechar', { duration: 3000 });
+      this.router.navigate(['/vendas']);
+    };
+
+    const errorAction = (error: any) => {
+      console.error(`Erro ao ${this.isEdit ? 'atualizar' : 'criar'} Venda`, error);
+      this.snackBar.open(`Erro ao ${this.isEdit ? 'atualizar' : 'criar'} venda.`, 'Fechar', { duration: 3000 });
+    };
+
     if (this.isEdit && this.vendaId) {
-      this.vendaService.updateVenda(this.vendaId, vendaParaSalvar).subscribe(
-        () => this.router.navigate(['/vendas']),
-        error => console.error('Erro ao atualizar Venda', error)
-      );
+      this.vendaService.updateVenda(this.vendaId, vendaParaSalvar).subscribe(successAction, errorAction);
     } else {
-      this.vendaService.createVenda(vendaParaSalvar).subscribe(
-        () => this.router.navigate(['/vendas']),
-        error => console.error('Erro ao criar Venda', error)
-      );
+      this.vendaService.createVenda(vendaParaSalvar).subscribe(successAction, errorAction);
     }
   }
 }
