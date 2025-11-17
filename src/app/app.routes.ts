@@ -21,6 +21,8 @@ import { ClienteFormComponent } from './components/cliente-form/cliente-form';
 import { ClienteListComponent } from './components/cliente-list/cliente-list';
 import { ProdutoFormComponent } from './components/produto-form/produto-form';
 import { ProdutoListComponent } from './components/produto-list/produto-list';
+import { VendaFormComponent } from './components/venda-form/venda-form';
+import { VendaListComponent } from './components/venda-list/venda-list';
 
 
 export const routes: Routes = [
@@ -64,6 +66,10 @@ export const routes: Routes = [
  { path: 'produtos', component: ProdutoListComponent },
  { path: 'produtos/novo', component: ProdutoFormComponent },
  { path: 'produtos/editar/:id', component: ProdutoFormComponent },
+
+ { path: 'vendas', component: VendaListComponent },
+ { path: 'vendas/novo', component: VendaFormComponent },
+ { path: 'vendas/editar/:id', component: VendaFormComponent },
 
  { path: '', redirectTo: '/sexos', pathMatch: 'full' },
 ];  

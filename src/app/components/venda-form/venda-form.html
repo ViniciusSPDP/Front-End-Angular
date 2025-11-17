@@ -1,0 +1,79 @@
+<h2>{{ isEdit ? 'Editar' : 'Nova' }} Venda</h2>
+<form (ngSubmit)="onSubmit()">
+
+  <div>
+    <label for="cliente">Cliente:</label>
+    <select id="cliente" [(ngModel)]="vendaForm.clienteId" name="cliente" required>
+      <option [ngValue]="undefined" disabled>Selecione...</option>
+      <option *ngFor="let c of clientes" [value]="c.codcliente">{{ c.nomecliente }}</option>
+    </select>
+  </div>
+
+  <hr>
+
+  <fieldset class="item-form">
+    <legend>Adicionar Produto</legend>
+    
+    <div class="item-form-row">
+      <div>
+        <label for="produto">Produto (Estoque):</label>
+        
+        <select id="produto" [(ngModel)]="itemForm.produtoId" name="produto" (ngModelChange)="onProdutoSelecionado()">
+          <option [ngValue]="undefined" disabled>Selecione...</option>
+          <option *ngFor="let p of produtos" [value]="p.codproduto">
+            {{ p.nomeproduto }} ({{ p.quantidade }})
+          </option>
+        </select>
+        </div>
+
+      <div>
+        <label for="quantidade">Quantidade:</label>
+        <input type="number" id="quantidade" [(ngModel)]="itemForm.quantidade" name="quantidade" min="1">
+      </div>
+
+      <div>
+        <label for="valor">Valor Unit. (R$):</label>
+        <input type="number" id="valor" [(ngModel)]="itemForm.valor" name="valor" min="0" step="0.01">
+      </div>
+    </div>
+    
+    <button type="button" (click)="adicionarItem()" class="btn btn-primary">Adicionar Item</button>
+  </fieldset>
+
+  <hr>
+
+  <h3>Itens da Venda</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Produto</th>
+        <th>Quantidade</th>
+        <th>Valor Unit.</th>
+        <th>Subtotal</th>
+        <th>Ação</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of itensVenda; let i = index">
+        <td>{{ item.produto.nomeproduto }}</td>
+        <td>{{ item.quantidade }}</td>
+        <td>{{ item.valor | currency: 'BRL' }}</td>
+        <td>{{ (item.quantidade * item.valor) | currency: 'BRL' }}</td>
+        <td>
+          <button type="button" (click)="removerItem(i)" class="btn btn-delete">Remover</button>
+        </td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="3" style="text-align: right; font-weight: bold;">Total:</td>
+        <td colspan="2" style="font-weight: bold;">{{ calcularTotalVenda() | currency: 'BRL' }}</td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary">{{ isEdit ? 'Atualizar' : 'Salvar' }} Venda</button>
+    <a routerLink="/vendas" class="btn btn-cancel">Cancelar</a>
+  </div>
+</form>
