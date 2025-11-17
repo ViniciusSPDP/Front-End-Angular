@@ -10,9 +10,9 @@ import { MatDialogModule } from '@angular/material/dialog';
     <div mat-dialog-content>
       <p>{{ data.message }}</p>
     </div>
-    <div mat-dialog-actions>
-      <button mat-button (click)="onNoClick()">Não</button>
-      <button mat-button [mat-dialog-close]="true" cdkFocusInitial>Sim</button>
+    <div mat-dialog-actions align="end"> <button mat-button (click)="onNoClick()">Não</button>
+      
+      <button mat-raised-button color="warn" [mat-dialog-close]="true" cdkFocusInitial>Sim</button>
     </div>
   `,
   standalone: true,

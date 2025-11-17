@@ -1,21 +1,41 @@
-<h2>Lista de Marcas</h2>
-<a routerLink="/marcas/novo" class="btn btn-primary">Nova Marca</a>
-<table>
-  <thead>
-    <tr>
-      <th>Código</th>
-      <th>Nome da Marca</th>
-      <th>Ações</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let marca of marcas">
-      <td>{{ marca.codmarca }}</td>
-      <td>{{ marca.nomemarca }}</td>
-      <td>
-        <a [routerLink]="['/marcas/editar', marca.codmarca]" class="btn btn-edit">Editar</a>
-        <button (click)="deleteMarca(marca.codmarca!)" class="btn btn-delete">Excluir</button>
-      </td>
-    </tr>
-  </tbody>
-</table>
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Lista de Marcas</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="button-container">
+      <a mat-raised-button color="primary" routerLink="/marcas/novo">
+        <mat-icon>add</mat-icon>
+        Nova Marca
+      </a>
+    </div>
+
+    <table mat-table [dataSource]="marcas" class="mat-elevation-z8">
+
+      <ng-container matColumnDef="codmarca">
+        <th mat-header-cell *matHeaderCellDef> Código </th>
+        <td mat-cell *matCellDef="let marca"> {{marca.codmarca}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="nomemarca">
+        <th mat-header-cell *matHeaderCellDef> Nome </th>
+        <td mat-cell *matCellDef="let marca"> {{marca.nomemarca}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="acoes">
+        <th mat-header-cell *matHeaderCellDef> Ações </th>
+        <td mat-cell *matCellDef="let marca">
+          <a mat-icon-button color="primary" [routerLink]="['/marcas/editar', marca.codmarca]">
+            <mat-icon>edit</mat-icon>
+          </a>
+          <button mat-icon-button color="warn" (click)="deleteMarca(marca.codmarca!)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="['codmarca', 'nomemarca', 'acoes']"></tr>
+      <tr mat-row *matRowDef="let row; columns: ['codmarca', 'nomemarca', 'acoes'];"></tr>
+    </table>
+  </mat-card-content>
+</mat-card>
