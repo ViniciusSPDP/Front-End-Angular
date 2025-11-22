@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { ClienteService, Cliente } from '../../services/cliente';
 import { SexoService, Sexo } from '../../services/sexo';
@@ -10,12 +9,11 @@ import { BairroService, Bairro } from '../../services/bairro';
 import { CidadeService, Cidade } from '../../services/cidade';
 import { RuaService, Rua } from '../../services/rua';
 import { CepService, Cep } from '../../services/cep';
-import { MaterialModule } from '../../material.module';
 
 @Component({
   selector: 'app-cliente-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, MaterialModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './cliente-form.html',
   styleUrls: ['./cliente-form.scss']
 })
@@ -41,8 +39,7 @@ export class ClienteFormComponent implements OnInit {
     private bairroService: BairroService,
     private cidadeService: CidadeService,
     private ruaService: RuaService,
-    private cepService: CepService,
-    private snackBar: MatSnackBar
+    private cepService: CepService
   ) {
     this.form = this.fb.group({
       nomecliente: ['', Validators.required],
@@ -103,7 +100,7 @@ export class ClienteFormComponent implements OnInit {
 
   onSubmit(): void {
     if (this.form.invalid) {
-      this.snackBar.open('Por favor, preencha todos os campos obrigatórios.', 'Fechar', { duration: 3000 });
+      alert('Por favor, preencha todos os campos obrigatórios.');
       return;
     }
 
@@ -118,20 +115,16 @@ export class ClienteFormComponent implements OnInit {
       cep: { codcep: formValue.cep }
     };
 
-    const successAction = () => {
-      this.snackBar.open(`Cliente ${this.isEdit ? 'atualizado' : 'criado'} com sucesso!`, 'Fechar', { duration: 3000 });
-      this.router.navigate(['/clientes']);
-    };
-
-    const errorAction = (error: any) => {
-      console.error(`Erro ao ${this.isEdit ? 'atualizar' : 'criar'} Cliente`, error);
-      this.snackBar.open(`Erro ao ${this.isEdit ? 'atualizar' : 'criar'} cliente.`, 'Fechar', { duration: 3000 });
-    };
-
     if (this.isEdit) {
-      this.clienteService.updateCliente(this.clienteId!, cliente).subscribe(successAction, errorAction);
+      this.clienteService.updateCliente(this.clienteId!, cliente).subscribe(
+        () => this.router.navigate(['/clientes']),
+        error => console.error('Erro ao atualizar Cliente', error)
+      );
     } else {
-      this.clienteService.createCliente(cliente).subscribe(successAction, errorAction);
+      this.clienteService.createCliente(cliente).subscribe(
+        () => this.router.navigate(['/clientes']),
+        error => console.error('Erro ao criar Cliente', error)
+      );
     }
   }
 }

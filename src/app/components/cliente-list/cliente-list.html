@@ -1,62 +1,37 @@
-<mat-card>
-  <mat-card-header>
-    <mat-card-title>Lista de Clientes</mat-card-title>
-  </mat-card-header>
-  <mat-card-content>
-    <div class="button-container">
-      <a mat-raised-button color="primary" routerLink="/clientes/novo">
-        <mat-icon>add</mat-icon>
-        Novo Cliente
-      </a>
-    </div>
+<h2>Lista de Clientes</h2>
+<a routerLink="/clientes/novo" class="btn btn-primary">
+  <i class="material-icons">add</i>
+  Novo Cliente
+</a>
 
-    <table mat-table [dataSource]="clientes" class="mat-elevation-z8">
-
-      <!-- Coluna Código -->
-      <ng-container matColumnDef="codcliente">
-        <th mat-header-cell *matHeaderCellDef> Código </th>
-        <td mat-cell *matCellDef="let cliente"> {{cliente.codcliente}} </td>
-      </ng-container>
-
-      <!-- Coluna Nome -->
-      <ng-container matColumnDef="nomecliente">
-        <th mat-header-cell *matHeaderCellDef> Nome </th>
-        <td mat-cell *matCellDef="let cliente"> {{cliente.nomecliente}} </td>
-      </ng-container>
-
-      <!-- Coluna CPF -->
-      <ng-container matColumnDef="cpf">
-        <th mat-header-cell *matHeaderCellDef> CPF </th>
-        <td mat-cell *matCellDef="let cliente"> {{cliente.cpf}} </td>
-      </ng-container>
-
-      <!-- Coluna Data Nasc. -->
-      <ng-container matColumnDef="datanasc">
-        <th mat-header-cell *matHeaderCellDef> Data Nasc. </th>
-        <td mat-cell *matCellDef="let cliente"> {{cliente.datanasc | date: 'dd/MM/yyyy'}} </td>
-      </ng-container>
-
-      <!-- Coluna Cidade -->
-      <ng-container matColumnDef="cidade">
-        <th mat-header-cell *matHeaderCellDef> Cidade </th>
-        <td mat-cell *matCellDef="let cliente"> {{cliente.cidade.nomecidade}} - {{cliente.cidade.uf.siglauf}} </td>
-      </ng-container>
-
-      <!-- Coluna Ações -->
-      <ng-container matColumnDef="acoes">
-        <th mat-header-cell *matHeaderCellDef> Ações </th>
-        <td mat-cell *matCellDef="let cliente">
-          <a mat-icon-button color="primary" [routerLink]="['/clientes/editar', cliente.codcliente]">
-            <mat-icon>edit</mat-icon>
-          </a>
-          <button mat-icon-button color="warn" (click)="deleteCliente(cliente.codcliente!)">
-            <mat-icon>delete</mat-icon>
-          </button>
-        </td>
-      </ng-container>
-
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
-  </mat-card-content>
-</mat-card>
+<table>
+  <thead>
+    <tr>
+      <th>Código</th>
+      <th>Nome</th>
+      <th>CPF</th>
+      <th>Data Nasc.</th>
+      <th>Cidade</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let cliente of clientes">
+      <td>{{ cliente.codcliente }}</td>
+      <td>{{ cliente.nomecliente }}</td>
+      <td>{{ cliente.cpf }}</td>
+      <td>{{ cliente.datanasc | date: 'dd/MM/yyyy' }}</td>
+      <td>{{ cliente.cidade.nomecidade }} - {{ cliente.cidade.uf.siglauf }}</td>
+      <td>
+        <a [routerLink]="['/clientes/editar', cliente.codcliente]" class="btn btn-edit">
+          <i class="material-icons">edit</i>
+          Editar
+        </a>
+        <button (click)="deleteCliente(cliente.codcliente!)" class="btn btn-delete">
+          <i class="material-icons">delete</i>
+          Excluir
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>

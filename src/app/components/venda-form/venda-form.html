@@ -1,89 +1,95 @@
-<mat-card>
-  <mat-card-header>
-    <mat-card-title>{{ isEdit ? 'Editar' : 'Nova' }} Venda</mat-card-title>
-  </mat-card-header>
-  <mat-card-content>
-    <form [formGroup]="form" (ngSubmit)="onSubmit()">
-      <mat-form-field appearance="fill">
-        <mat-label>Cliente</mat-label>
-        <mat-select formControlName="clienteId">
-          <mat-option *ngFor="let c of clientes" [value]="c.codcliente">{{ c.nomecliente }}</mat-option>
-        </mat-select>
-        <mat-error *ngIf="form.get('clienteId')?.hasError('required')">Cliente é obrigatório.</mat-error>
-      </mat-form-field>
-    </form>
+<h2>{{ isEdit ? 'Editar' : 'Nova' }} Venda</h2>
 
-    <mat-divider></mat-divider>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div>
+    <label for="clienteId">Cliente: <span class="required">*</span></label>
+    <select id="clienteId" formControlName="clienteId" required>
+      <option [ngValue]="null" disabled>Selecione um cliente</option>
+      <option *ngFor="let c of clientes" [value]="c.codcliente">{{ c.nomecliente }}</option>
+    </select>
+    <div class="error-message" *ngIf="form.get('clienteId')?.hasError('required') && form.get('clienteId')?.touched">
+      Cliente é obrigatório
+    </div>
+  </div>
 
-    <div class="item-form" [formGroup]="itemForm">
-      <h3>Adicionar Produto</h3>
-      <div class="item-form-row">
-        <mat-form-field appearance="fill">
-          <mat-label>Produto (Estoque)</mat-label>
-          <mat-select formControlName="produtoId">
-            <mat-option *ngFor="let p of produtos" [value]="p.codproduto">
-              {{ p.nomeproduto }} ({{ p.quantidade }})
-            </mat-option>
-          </mat-select>
-          <mat-error *ngIf="itemForm.get('produtoId')?.hasError('required')">Produto é obrigatório.</mat-error>
-        </mat-form-field>
+  <hr style="margin: 32px 0; border: none; border-top: 1px solid #e2e8f0;">
 
-        <mat-form-field appearance="fill">
-          <mat-label>Quantidade</mat-label>
-          <input matInput type="number" formControlName="quantidade" min="1">
-          <mat-error *ngIf="itemForm.get('quantidade')?.hasError('required')">Quantidade é obrigatória.</mat-error>
-          <mat-error *ngIf="itemForm.get('quantidade')?.hasError('min')">A quantidade deve ser maior que zero.</mat-error>
-        </mat-form-field>
-
-        <mat-form-field appearance="fill">
-          <mat-label>Valor Unit. (R$)</mat-label>
-          <input matInput type="number" formControlName="valor" min="0" step="0.01">
-          <mat-error *ngIf="itemForm.get('valor')?.hasError('required')">Valor é obrigatório.</mat-error>
-        </mat-form-field>
+  <h3>Adicionar Produto</h3>
+  <div [formGroup]="itemForm" class="item-form">
+    <div class="form-grid">
+      <div>
+        <label for="produtoId">Produto (Estoque): <span class="required">*</span></label>
+        <select id="produtoId" formControlName="produtoId" required>
+          <option [ngValue]="null" disabled>Selecione um produto</option>
+          <option *ngFor="let p of produtos" [value]="p.codproduto">
+            {{ p.nomeproduto }} ({{ p.quantidade }})
+          </option>
+        </select>
       </div>
-      <button mat-raised-button color="primary" type="button" (click)="adicionarItem()">Adicionar Item</button>
+
+      <div>
+        <label for="quantidade">Quantidade: <span class="required">*</span></label>
+        <input type="number" id="quantidade" formControlName="quantidade" min="1" required>
+      </div>
+
+      <div>
+        <label for="valor">Valor Unit. (R$): <span class="required">*</span></label>
+        <input type="number" id="valor" formControlName="valor" min="0" step="0.01" required>
+      </div>
     </div>
 
-    <mat-divider></mat-divider>
+    <button type="button" (click)="adicionarItem()" class="btn btn-primary">
+      <i class="material-icons">add</i>
+      Adicionar Item
+    </button>
+  </div>
 
-    <h3>Itens da Venda</h3>
-    <table mat-table [dataSource]="itensVenda" class="mat-elevation-z8">
-      <!-- Colunas da tabela -->
-      <ng-container matColumnDef="produto">
-        <th mat-header-cell *matHeaderCellDef> Produto </th>
-        <td mat-cell *matCellDef="let item"> {{item.produto.nomeproduto}} </td>
-      </ng-container>
-      <ng-container matColumnDef="quantidade">
-        <th mat-header-cell *matHeaderCellDef> Quantidade </th>
-        <td mat-cell *matCellDef="let item"> {{item.quantidade}} </td>
-      </ng-container>
-      <ng-container matColumnDef="valor">
-        <th mat-header-cell *matHeaderCellDef> Valor Unit. </th>
-        <td mat-cell *matCellDef="let item"> {{item.valor | currency: 'BRL'}} </td>
-      </ng-container>
-      <ng-container matColumnDef="subtotal">
-        <th mat-header-cell *matHeaderCellDef> Subtotal </th>
-        <td mat-cell *matCellDef="let item"> {{(item.quantidade * item.valor) | currency: 'BRL'}} </td>
-      </ng-container>
-      <ng-container matColumnDef="acao">
-        <th mat-header-cell *matHeaderCellDef> Ação </th>
-        <td mat-cell *matCellDef="let i = index">
-          <button mat-icon-button color="warn" (click)="removerItem(i)">
-            <mat-icon>delete</mat-icon>
+  <hr style="margin: 32px 0; border: none; border-top: 1px solid #e2e8f0;">
+
+  <h3>Itens da Venda</h3>
+  <table *ngIf="itensVenda.length > 0">
+    <thead>
+      <tr>
+        <th>Produto</th>
+        <th>Quantidade</th>
+        <th>Valor Unit.</th>
+        <th>Subtotal</th>
+        <th>Ação</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of itensVenda; let i = index">
+        <td>{{ item.produto.nomeproduto }}</td>
+        <td>{{ item.quantidade }}</td>
+        <td>{{ item.valor | currency: 'BRL' }}</td>
+        <td>{{ (item.quantidade * item.valor) | currency: 'BRL' }}</td>
+        <td>
+          <button type="button" (click)="removerItem(i)" class="btn btn-delete">
+            <i class="material-icons">delete</i>
+            Remover
           </button>
         </td>
-      </ng-container>
+      </tr>
+    </tbody>
+  </table>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
-    <div class="total-container">
-      <strong>Total: {{ calcularTotalVenda() | currency: 'BRL' }}</strong>
-    </div>
+  <div *ngIf="itensVenda.length === 0" class="empty-state" style="padding: 40px 20px;">
+    <i class="material-icons">shopping_cart</i>
+    <p>Nenhum produto adicionado ainda</p>
+  </div>
 
-    <div class="form-actions">
-      <button mat-raised-button color="primary" type="submit" (click)="onSubmit()">{{ isEdit ? 'Atualizar' : 'Salvar' }} Venda</button>
-      <a mat-button routerLink="/vendas">Cancelar</a>
-    </div>
-  </mat-card-content>
-</mat-card>
+  <div class="total-container" *ngIf="itensVenda.length > 0">
+    <strong>Total: {{ calcularTotalVenda() | currency: 'BRL' }}</strong>
+  </div>
+
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary">
+      <i class="material-icons">save</i>
+      {{ isEdit ? 'Atualizar' : 'Salvar' }} Venda
+    </button>
+    <a routerLink="/vendas" class="btn btn-cancel">
+      <i class="material-icons">close</i>
+      Cancelar
+    </a>
+  </div>
+</form>

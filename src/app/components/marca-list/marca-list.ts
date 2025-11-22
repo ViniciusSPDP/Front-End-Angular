@@ -2,16 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MarcaService, Marca } from '../../services/marca';
-import { MaterialModule } from '../../material.module';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog'; 
-import { MarcaFormComponent } from '../marca-form/marca-form'; 
+import { NotificationService } from '../../services/notification';
 
 @Component({
   selector: 'app-marca-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, MaterialModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './marca-list.html',
   styleUrls: ['./marca-list.scss']
 })
@@ -20,8 +16,7 @@ export class MarcaListComponent implements OnInit {
   
   constructor(
     private marcaService: MarcaService,
-    public dialog: MatDialog, 
-    private snackBar: MatSnackBar 
+    private notification: NotificationService
   ) { }
 
   ngOnInit(): void {
@@ -31,37 +26,29 @@ export class MarcaListComponent implements OnInit {
   loadMarcas(): void {
     this.marcaService.getMarcas().subscribe(
       data => this.marcas = data,
-      error => console.error('Erro ao carregar Marcas', error)
+      error => {
+        console.error('Erro ao carregar Marcas', error);
+        this.notification.error('Erro ao carregar a lista de marcas');
+      }
     );
   }
 
-  
-
   deleteMarca(id: number): void {
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: {
-        title: 'Confirmar Exclusão',
-        message: 'Tem certeza que deseja excluir esta marca?'
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) { 
-        this.marcaService.deleteMarca(id).subscribe(
-          () => {
-            this.loadMarcas(); 
-            this.snackBar.open('Marca excluída com sucesso!', 'Fechar', {
-              duration: 3000,
-            });
-          },
-          error => {
-            console.error('Erro ao excluir Marca', error);
-            this.snackBar.open('Erro ao excluir marca.', 'Fechar', {
-              duration: 3000,
-            });
+    if(confirm('Tem certeza que deseja excluir esta marca?')) {
+      this.marcaService.deleteMarca(id).subscribe(
+        () => {
+          this.notification.success('Marca excluída com sucesso!');
+          this.loadMarcas();
+        },
+        error => {
+          console.error('Erro ao excluir Marca', error);
+          if (error.status === 409 || error.status === 500) {
+            this.notification.error('Não é possível excluir esta marca pois ela está associada a um ou mais produtos');
+          } else {
+            this.notification.error('Erro ao excluir marca. Tente novamente.');
           }
-        );
-      }
-    });
+        }
+      );
+    }
   }
 }

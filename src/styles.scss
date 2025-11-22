@@ -7,54 +7,76 @@
 
 body {
   font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
-  background: #f5f7fa;
+  background: #f8fafc;
   min-height: 100vh;
-  padding: 0;
-  margin: 0;
   color: #2c3e50;
   line-height: 1.6;
 }
 
+/* Layout Principal com Sidebar */
+app-root {
+  display: flex;
+  min-height: 100vh;
+}
+
+router-outlet {
+  display: none;
+}
+
+/* Container Principal com Margem e Respiro */
+.main-content {
+  margin-left: 260px;
+  flex: 1;
+  padding: 40px;
+  transition: margin-left 0.3s ease;
+  max-width: 1600px;
+  width: 100%;
+}
+
+.sidebar.collapsed ~ .main-content {
+  margin-left: 70px;
+}
+
 h1 {
   color: #1a202c;
-  text-align: center;
-  padding: 2.5rem 0;
   font-size: 2rem;
   font-weight: 600;
-  margin-bottom: 1rem;
+  margin-bottom: 32px;
   letter-spacing: -0.5px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #e2e8f0;
 }
 
 h2 {
   color: #2d3748;
-  margin-bottom: 1.5rem;
+  margin-bottom: 24px;
   font-size: 1.5rem;
   font-weight: 600;
-  padding-bottom: 0.75rem;
+  padding-bottom: 12px;
   border-bottom: 2px solid #e2e8f0;
 }
 
-/* Container Principal com Margem */
-.main-container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 30px;
+h3 {
+  color: #4a5568;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 16px;
 }
 
-/* Cards com Espaçamento */
-.card, .form-card {
+/* Cards com Muito Respiro */
+.card, .form-card, mat-card {
   background: white;
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 32px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
-  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  margin-bottom: 32px;
   border: 1px solid #e2e8f0;
 }
 
 .card-header {
-  margin-bottom: 24px;
+  margin-bottom: 32px;
   
-  h2 {
+  mat-card-title, h2 {
     display: flex;
     align-items: center;
     gap: 12px;
@@ -62,29 +84,30 @@ h2 {
     border: none;
     padding: 0;
     
-    i {
-      color: #4a5568;
+    mat-icon, i {
+      color: #3182ce;
+      font-size: 28px;
     }
   }
 }
 
-/* Tabelas com Margem e Espaçamento */
+/* Tabelas Espaçadas */
 table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  margin-top: 24px;
+  margin-top: 32px;
   background: white;
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   border: 1px solid #e2e8f0;
 }
 
 th {
-  background: #f7fafc;
+  background: #f8fafc;
   color: #2d3748;
-  padding: 16px 20px;
+  padding: 20px 24px;
   text-align: left;
   font-weight: 600;
   text-transform: uppercase;
@@ -94,38 +117,51 @@ th {
 }
 
 td {
-  padding: 16px 20px;
+  padding: 20px 24px;
   border-bottom: 1px solid #f1f5f9;
   transition: background-color 0.2s ease;
   color: #4a5568;
+  font-size: 0.95rem;
 }
 
 tr:last-child td {
   border-bottom: none;
 }
 
-tbody tr:hover td {
-  background-color: #f8fafc;
+tbody tr {
+  transition: all 0.2s ease;
 }
 
-/* Formulários */
+tbody tr:hover {
+  background-color: #f8fafc;
+  transform: scale(1.001);
+}
+
+/* Formulários Espaçados */
 form {
   background: white;
-  padding: 32px;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
-  max-width: 700px;
-  margin: 24px auto;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  max-width: 800px;
+  margin: 32px auto;
   border: 1px solid #e2e8f0;
 }
 
-.form-group {
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
   margin-bottom: 24px;
+}
+
+.form-group {
+  margin-bottom: 28px;
 }
 
 label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   color: #4a5568;
   font-weight: 500;
   font-size: 0.9rem;
@@ -140,11 +176,12 @@ input[type="text"],
 input[type="number"],
 input[type="date"],
 input[type="email"],
-select {
+select,
+mat-select {
   width: 100%;
-  padding: 12px 16px;
+  padding: 14px 16px;
   border: 1px solid #cbd5e0;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 0.95rem;
   transition: all 0.2s ease;
   background-color: white;
@@ -152,8 +189,8 @@ select {
   
   &:focus {
     outline: none;
-    border-color: #4299e1;
-    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+    border-color: #3182ce;
+    box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
   }
   
   &::placeholder {
@@ -167,84 +204,20 @@ select {
   }
 }
 
-/* Validação de Formulários */
-input.ng-invalid.ng-touched,
-select.ng-invalid.ng-touched {
-  border-color: #fc8181;
-  background-color: #fff5f5;
+mat-form-field {
+  width: 100%;
+  margin-bottom: 8px;
 }
 
-input.ng-valid.ng-touched,
-select.ng-valid.ng-touched {
-  border-color: #48bb78;
-}
-
-.error-message {
-  color: #e53e3e;
-  font-size: 0.85rem;
-  margin-top: 6px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.success-message {
-  color: #38a169;
-  font-size: 0.85rem;
-  margin-top: 6px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-/* Input Wrapper */
-.input-wrapper {
-  position: relative;
-  
-  .input-icon {
-    position: absolute;
-    left: 14px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #a0aec0;
-    font-size: 20px;
-    pointer-events: none;
-  }
-  
-  input {
-    padding-left: 44px;
-  }
-  
-  .status-icon {
-    position: absolute;
-    right: 14px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 20px;
-    
-    &.success { color: #48bb78; }
-    &.error { color: #e53e3e; }
-  }
-}
-
-.input-error {
-  border-color: #fc8181 !important;
-  background-color: #fff5f5 !important;
-}
-
-.input-success {
-  border-color: #48bb78 !important;
-}
-
-/* Botões Minimalistas */
+/* Botões Modernos */
 button,
 .btn {
-  padding: 10px 20px;
-  margin: 4px;
+  padding: 12px 24px;
+  margin: 6px;
   cursor: pointer;
   border: none;
-  border-radius: 6px;
-  font-size: 0.9rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
   font-weight: 500;
   transition: all 0.2s ease;
   text-decoration: none;
@@ -252,31 +225,31 @@ button,
   align-items: center;
   gap: 8px;
   
-  &:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
   
-  &:active {
+  &:active:not(:disabled) {
     transform: translateY(0);
   }
   
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-    transform: none !important;
   }
   
-  i {
-    font-size: 18px;
+  mat-icon, i {
+    font-size: 20px;
   }
 }
 
-.btn-primary {
+.btn-primary,
+button[color="primary"] {
   background: #3182ce;
   color: white;
   
-  &:hover {
+  &:hover:not(:disabled) {
     background: #2c5282;
   }
 }
@@ -290,11 +263,12 @@ button,
   }
 }
 
-.btn-delete {
+.btn-delete,
+button[color="warn"] {
   background: #e53e3e;
   color: white;
   
-  &:hover {
+  &:hover:not(:disabled) {
     background: #c53030;
   }
 }
@@ -308,9 +282,27 @@ button,
   }
 }
 
-.btn-small {
-  padding: 8px 12px;
-  font-size: 0.85rem;
+/* Icon Buttons */
+button[mat-icon-button] {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 4px;
+  
+  &:hover:not(:disabled) {
+    background: #f7fafc;
+  }
+  
+  &[color="primary"]:hover {
+    background: #ebf8ff;
+  }
+  
+  &[color="warn"]:hover {
+    background: #fff5f5;
+  }
 }
 
 /* Container de Botões */
@@ -318,68 +310,33 @@ button,
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 32px;
   gap: 16px;
   flex-wrap: wrap;
 }
 
 .form-actions {
   display: flex;
-  gap: 12px;
-  margin-top: 32px;
-  padding-top: 24px;
+  gap: 16px;
+  margin-top: 40px;
+  padding-top: 32px;
   border-top: 1px solid #e2e8f0;
   justify-content: flex-end;
-}
-
-/* Caixa de Pesquisa */
-.search-box {
-  display: flex;
-  align-items: center;
-  background: white;
-  border: 1px solid #cbd5e0;
-  border-radius: 6px;
-  padding: 8px 16px;
-  gap: 8px;
-  transition: all 0.2s ease;
-  
-  i {
-    color: #a0aec0;
-    font-size: 20px;
-  }
-  
-  input {
-    border: none;
-    background: transparent;
-    outline: none;
-    padding: 4px;
-    font-size: 0.9rem;
-    width: 250px;
-    
-    &::placeholder {
-      color: #a0aec0;
-    }
-  }
-  
-  &:focus-within {
-    border-color: #4299e1;
-    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
-  }
 }
 
 /* Estados de Loading */
 .loading-container {
   text-align: center;
-  padding: 60px 20px;
+  padding: 80px 20px;
   
   .spinner {
-    border: 3px solid #e2e8f0;
-    border-top: 3px solid #3182ce;
+    border: 4px solid #e2e8f0;
+    border-top: 4px solid #3182ce;
     border-radius: 50%;
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     animation: spin 1s linear infinite;
-    margin: 0 auto 20px;
+    margin: 0 auto 24px;
   }
   
   p {
@@ -396,28 +353,28 @@ button,
 /* Estado Vazio */
 .empty-state {
   text-align: center;
-  padding: 80px 20px;
+  padding: 100px 20px;
   
-  i {
-    font-size: 80px;
+  mat-icon, i {
+    font-size: 100px;
     color: #cbd5e0;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
   }
   
   p {
     color: #718096;
     font-size: 1.1rem;
-    margin-bottom: 24px;
+    margin-bottom: 32px;
   }
 }
 
-/* Badges Minimalistas */
+/* Badges */
 .badge {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px 12px;
-  border-radius: 12px;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
   font-size: 0.8rem;
   font-weight: 600;
 }
@@ -442,149 +399,72 @@ button,
   color: #742a2a;
 }
 
-.badge-info {
-  background: #e6fffa;
-  color: #234e52;
+/* Material Table Spacing */
+.mat-mdc-table {
+  background: white !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
 }
 
-/* Coluna de Ações */
-.actions-column {
-  text-align: center;
-  width: 180px;
+.mat-mdc-header-cell {
+  padding: 20px 24px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  font-size: 0.75rem !important;
+  letter-spacing: 0.5px !important;
+  color: #2d3748 !important;
+  background: #f8fafc !important;
 }
 
-.name-cell {
-  font-weight: 500;
-  color: #2d3748;
+.mat-mdc-cell {
+  padding: 20px 24px !important;
+  font-size: 0.95rem !important;
+  color: #4a5568 !important;
 }
 
-/* Rodapé da Tabela */
-.table-footer {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid #e2e8f0;
+.mat-mdc-row:hover {
+  background-color: #f8fafc !important;
+}
+
+/* Divider Spacing */
+mat-divider {
+  margin: 32px 0 !important;
+}
+
+/* Total Container */
+.total-container {
   text-align: right;
-  color: #718096;
-  font-size: 0.9rem;
-  
-  strong {
-    color: #3182ce;
-    font-weight: 600;
-  }
-}
-
-/* MENU MINIMALISTA */
-.mega-menu {
-  background: white;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  font-size: 1.3rem;
+  margin-top: 24px;
+  padding: 20px;
+  background: #f8fafc;
   border-radius: 8px;
-  margin: 0 30px 30px 30px;
-  border: 1px solid #e2e8f0;
+  font-weight: 600;
+  color: #2d3748;
 }
 
-.mega-menu ul {
-  list-style-type: none;
+/* Lista de Produtos em Vendas */
+td ul {
   margin: 0;
-  padding: 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+td ul li {
+  padding: 8px 0;
   display: flex;
-  justify-content: center;
+  align-items: center;
+  gap: 8px;
 }
 
-.mega-menu li {
-  position: relative;
-}
-
-.mega-menu li a.dropbtn {
-  display: block;
-  color: #4a5568;
-  padding: 16px 24px;
-  text-decoration: none;
-  cursor: pointer;
-  font-weight: 500;
-  font-size: 0.95rem;
-  transition: all 0.2s ease;
-  border-radius: 6px;
-  margin: 8px;
-}
-
-.mega-menu li a.dropbtn:hover,
-.dropdown:hover .dropbtn {
-  background: #f7fafc;
-  color: #2d3748;
-}
-
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background: white;
-  min-width: 600px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-  z-index: 1000;
-  border-radius: 8px;
-  padding: 24px;
-  left: 50%;
-  transform: translateX(-50%);
-  top: 100%;
-  margin-top: 8px;
-  flex-direction: row;
-  gap: 24px;
-  border: 1px solid #e2e8f0;
-}
-
-.dropdown:hover .dropdown-content {
-  display: flex;
-}
-
-.dropdown-column {
-  flex: 1;
-}
-
-.dropdown-column h3 {
-  margin: 0 0 12px 0;
-  color: #2d3748;
-  border-bottom: 2px solid #e2e8f0;
-  padding-bottom: 8px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.dropdown-content a {
-  color: #4a5568;
-  padding: 10px 12px;
-  text-decoration: none;
-  display: block;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-  font-size: 0.9rem;
-}
-
-.dropdown-content a:hover {
-  background: #f7fafc;
+td ul li:before {
+  content: "•";
   color: #3182ce;
-  padding-left: 16px;
+  font-weight: bold;
+  font-size: 1.2rem;
 }
 
-.dropdown-content a.active {
-  font-weight: 600;
-  color: #3182ce;
-  background: #ebf8ff;
-}
-
-/* Notificações Toast */
-.toast-container {
-  position: fixed;
-  top: 24px;
-  right: 24px;
-  z-index: 9999;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  max-width: 400px;
-}
-
-/* Animações Suaves */
+/* Animações */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -596,67 +476,38 @@ button,
   }
 }
 
-@keyframes slideInRight {
-  from {
-    transform: translateX(400px);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-@keyframes slideOutRight {
-  from {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  to {
-    transform: translateX(400px);
-    opacity: 0;
-  }
-}
-
 .card, form, table {
   animation: fadeIn 0.3s ease;
 }
 
 /* Responsividade */
+@media (max-width: 1024px) {
+  .main-content {
+    margin-left: 70px;
+    padding: 30px;
+  }
+}
+
 @media (max-width: 768px) {
-  .main-container {
-    padding: 16px;
+  .main-content {
+    margin-left: 0;
+    padding: 20px;
   }
 
-  .card, .form-card, form {
-    padding: 20px;
-    margin-bottom: 16px;
+  .card, .form-card, form, mat-card {
+    padding: 24px;
+    margin-bottom: 24px;
+    border-radius: 10px;
   }
 
   h1 {
     font-size: 1.5rem;
-    padding: 1.5rem 0;
+    margin-bottom: 24px;
   }
 
   h2 {
     font-size: 1.25rem;
-  }
-
-  .mega-menu {
-    margin: 0 16px 20px 16px;
-  }
-
-  .mega-menu ul {
-    flex-direction: column;
-  }
-
-  .dropdown-content {
-    position: relative;
-    left: 0;
-    transform: none;
-    min-width: 100%;
-    flex-direction: column;
-    margin-top: 0;
+    margin-bottom: 20px;
   }
 
   .button-container {
@@ -664,12 +515,9 @@ button,
     align-items: stretch;
   }
 
-  .search-box {
-    width: 100%;
-    
-    input {
-      width: 100%;
-    }
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
   }
 
   table {
@@ -677,7 +525,7 @@ button,
   }
 
   th, td {
-    padding: 12px;
+    padding: 14px 16px;
   }
 
   .form-actions {
@@ -689,10 +537,8 @@ button,
     }
   }
 
-  .toast-container {
-    left: 16px;
-    right: 16px;
-    top: 16px;
+  form {
+    padding: 28px;
   }
 }
 
@@ -720,22 +566,168 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Listas dentro de tabelas */
-td ul {
-  margin: 0;
-  padding-left: 20px;
-  list-style: none;
+/* Ajustes para Material Angular */
+.mat-mdc-snack-bar-container {
+  margin: 24px !important;
 }
 
-td ul li {
-  padding: 4px 0;
+.mdc-snackbar__surface {
+  border-radius: 8px !important;
+  padding: 16px 24px !important;
+}
+
+/* Adicione estas animações ao final do seu styles.scss */
+
+/* Animações para Notificações Toast */
+@keyframes slideInRight {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* Estilo para mensagens de erro em formulários */
+.error-message {
+  color: #e53e3e;
+  font-size: 0.85rem;
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  animation: fadeIn 0.3s ease;
+}
+
+.error-message::before {
+  content: '⚠';
+  font-size: 1rem;
+}
+
+.success-message {
+  color: #38a169;
+  font-size: 0.85rem;
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  animation: fadeIn 0.3s ease;
+}
+
+.success-message::before {
+  content: '✓';
+  font-size: 1rem;
+}
+
+/* Feedback visual em inputs */
+input.ng-invalid.ng-touched,
+select.ng-invalid.ng-touched {
+  border-color: #fc8181;
+  background-color: #fff5f5;
+  animation: shake 0.5s ease;
+}
+
+input.ng-valid.ng-touched,
+select.ng-valid.ng-touched {
+  border-color: #48bb78;
+  background-color: #f0fff4;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+/* Loading State para botões */
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
   position: relative;
 }
 
-td ul li:before {
-  content: "•";
-  color: #718096;
-  font-weight: bold;
+button.loading::after {
+  content: '';
   position: absolute;
-  left: -15px;
+  width: 16px;
+  height: 16px;
+  top: 50%;
+  left: 50%;
+  margin-left: -8px;
+  margin-top: -8px;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 0.6s linear infinite;
+}
+
+/* Melhor feedback visual em hover de linhas da tabela */
+tbody tr {
+  transition: all 0.2s ease;
+}
+
+tbody tr:hover {
+  background-color: #f8fafc;
+  transform: scale(1.001);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Feedback em botões */
+button, .btn {
+  position: relative;
+  overflow: hidden;
+}
+
+button::before, .btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+button:active::before, .btn:active::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Container de notificações responsivo */
+@media (max-width: 768px) {
+  #notification-container {
+    top: 10px !important;
+    right: 10px !important;
+    left: 10px !important;
+    max-width: none !important;
+  }
+
+  .notification {
+    min-width: auto !important;
+  }
 }

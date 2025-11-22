@@ -2,13 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 // Serviços
 import { VendaService, VendaForm, VendaProdutoForm } from '../../services/vendas';
 import { Cliente, ClienteService } from '../../services/cliente';
 import { Produto, ProdutoService } from '../../services/produto';
-import { MaterialModule } from '../../material.module';
 
 interface ItemVendaTela {
   produto: Produto;
@@ -19,7 +17,7 @@ interface ItemVendaTela {
 @Component({
   selector: 'app-venda-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, CurrencyPipe, MaterialModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, RouterLink, CurrencyPipe, ReactiveFormsModule],
   templateUrl: './venda-form.html',
   styleUrls: ['./venda-form.scss']
 })
@@ -32,7 +30,6 @@ export class VendaFormComponent implements OnInit {
   produtos: Produto[] = [];
   
   itensVenda: ItemVendaTela[] = [];
-  displayedColumns: string[] = ['produto', 'quantidade', 'valor', 'subtotal', 'acao'];
 
   isEdit = false;
   vendaId: number | null = null;
@@ -43,8 +40,7 @@ export class VendaFormComponent implements OnInit {
     private router: Router,
     private vendaService: VendaService,
     private clienteService: ClienteService,
-    private produtoService: ProdutoService,
-    private snackBar: MatSnackBar
+    private produtoService: ProdutoService
   ) {
     this.form = this.fb.group({
       clienteId: [null, Validators.required]
@@ -97,7 +93,7 @@ export class VendaFormComponent implements OnInit {
 
   adicionarItem(): void {
     if (this.itemForm.invalid) {
-      this.snackBar.open('Preencha os dados do item corretamente.', 'Fechar', { duration: 3000 });
+      alert('Preencha os dados do item corretamente.');
       return;
     }
 
@@ -105,12 +101,12 @@ export class VendaFormComponent implements OnInit {
     const produtoSelecionado = this.produtos.find(p => p.codproduto == produtoId);
 
     if (!produtoSelecionado) {
-      this.snackBar.open('Produto selecionado não é válido.', 'Fechar', { duration: 3000 });
+      alert('Produto selecionado não é válido.');
       return;
     }
 
     if (quantidade > produtoSelecionado.quantidade) {
-      this.snackBar.open(`Quantidade insuficiente em estoque. Disponível: ${produtoSelecionado.quantidade}`, 'Fechar', { duration: 3000 });
+      alert(`Quantidade insuficiente em estoque. Disponível: ${produtoSelecionado.quantidade}`);
       return;
     }
 
@@ -137,11 +133,11 @@ export class VendaFormComponent implements OnInit {
 
   onSubmit(): void {
     if (this.form.invalid) {
-      this.snackBar.open('Selecione um cliente.', 'Fechar', { duration: 3000 });
+      alert('Selecione um cliente.');
       return;
     }
     if (this.itensVenda.length === 0) {
-      this.snackBar.open('A venda deve conter pelo menos um produto.', 'Fechar', { duration: 3000 });
+      alert('A venda deve conter pelo menos um produto.');
       return;
     }
 
@@ -156,20 +152,16 @@ export class VendaFormComponent implements OnInit {
       produtos: produtosForm
     };
 
-    const successAction = () => {
-      this.snackBar.open(`Venda ${this.isEdit ? 'atualizada' : 'criada'} com sucesso!`, 'Fechar', { duration: 3000 });
-      this.router.navigate(['/vendas']);
-    };
-
-    const errorAction = (error: any) => {
-      console.error(`Erro ao ${this.isEdit ? 'atualizar' : 'criar'} Venda`, error);
-      this.snackBar.open(`Erro ao ${this.isEdit ? 'atualizar' : 'criar'} venda.`, 'Fechar', { duration: 3000 });
-    };
-
     if (this.isEdit && this.vendaId) {
-      this.vendaService.updateVenda(this.vendaId, vendaParaSalvar).subscribe(successAction, errorAction);
+      this.vendaService.updateVenda(this.vendaId, vendaParaSalvar).subscribe(
+        () => this.router.navigate(['/vendas']),
+        error => console.error('Erro ao atualizar Venda', error)
+      );
     } else {
-      this.vendaService.createVenda(vendaParaSalvar).subscribe(successAction, errorAction);
+      this.vendaService.createVenda(vendaParaSalvar).subscribe(
+        () => this.router.navigate(['/vendas']),
+        error => console.error('Erro ao criar Venda', error)
+      );
     }
   }
 }

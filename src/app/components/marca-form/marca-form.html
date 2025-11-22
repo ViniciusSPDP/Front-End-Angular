@@ -1,23 +1,21 @@
-<mat-card>
-  <mat-card-header>
-    <mat-card-title>{{ isEdit ? 'Editar' : 'Nova' }} Marca</mat-card-title>
-  </mat-card-header>
-  <mat-card-content>
-    <form [formGroup]="form" (ngSubmit)="onSubmit()">
-      
-      <mat-form-field appearance="fill">
-        <mat-label>Nome da Marca</mat-label>
-        <input matInput formControlName="nomemarca">
-        
-        <mat-error *ngIf="form.get('nomemarca')?.hasError('required')">
-          Nome é obrigatório.
-        </mat-error>
-      </mat-form-field>
+<h2>{{ isEdit ? 'Editar' : 'Nova' }} Marca</h2>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div>
+    <label for="nomemarca">Nome da Marca: <span class="required">*</span></label>
+    <input type="text" id="nomemarca" formControlName="nomemarca" required>
+    <div class="error-message" *ngIf="form.get('nomemarca')?.hasError('required') && form.get('nomemarca')?.touched">
+      Nome é obrigatório
+    </div>
+  </div>
 
-      <div class="form-actions">
-        <button mat-raised-button color="primary" type="submit">{{ isEdit ? 'Atualizar' : 'Salvar' }}</button>
-        <a mat-button routerLink="/marcas">Cancelar</a>
-      </div>
-    </form>
-  </mat-card-content>
-</mat-card>
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary">
+      <i class="material-icons">save</i>
+      {{ isEdit ? 'Atualizar' : 'Salvar' }}
+    </button>
+    <a routerLink="/marcas" class="btn btn-cancel">
+      <i class="material-icons">close</i>
+      Cancelar
+    </a>
+  </div>
+</form>
