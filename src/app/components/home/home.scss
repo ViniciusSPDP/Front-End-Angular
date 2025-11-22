@@ -1,0 +1,151 @@
+.home-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  animation: fadeIn 0.5s ease;
+}
+
+.welcome-section {
+  text-align: center;
+  margin-bottom: 48px;
+
+  h1 {
+    font-size: 2.5rem;
+    color: #2d3748;
+    margin-bottom: 12px;
+    border: none; /* Remove a borda padrão do h1 global */
+  }
+
+  p {
+    font-size: 1.1rem;
+    color: #718096;
+  }
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+  margin-bottom: 48px;
+}
+
+.dashboard-card {
+  padding: 32px;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background: white;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    border-color: #bee3f8;
+  }
+
+  .card-icon {
+    width: 64px;
+    height: 64px;
+    background: #ebf8ff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    transition: background 0.3s ease;
+
+    mat-icon {
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
+      color: #3182ce;
+    }
+  }
+
+  &:hover .card-icon {
+    background: #3182ce;
+    
+    mat-icon {
+      color: white;
+    }
+  }
+
+  h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 12px;
+    border: none;
+  }
+
+  p {
+    color: #718096;
+    margin-bottom: 24px;
+    line-height: 1.5;
+    flex: 1; /* Empurra o botão para baixo */
+  }
+
+  .card-actions {
+    width: 100%;
+  }
+
+  .full-width {
+    width: 100%;
+    justify-content: center;
+    margin: 0;
+  }
+}
+
+.shortcuts-section {
+  h3 {
+    font-size: 1.1rem;
+    color: #4a5568;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e2e8f0;
+  }
+
+  .chips-container {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .shortcut-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 30px;
+    color: #4a5568;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      color: #3182ce;
+    }
+
+    &:hover {
+      background: #ebf8ff;
+      border-color: #3182ce;
+      color: #2c5282;
+      transform: translateY(-2px);
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}

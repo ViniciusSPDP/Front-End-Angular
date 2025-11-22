@@ -99,7 +99,8 @@ export class VendaFormComponent implements OnInit {
     this.produtoService.getProdutos().subscribe(data => this.produtos = data);
   }
 
-  adicionarItem(): void {
+adicionarItem(): void {
+    // 1. Validações iniciais do formulário
     if (this.itemForm.invalid) {
       this.notification.warning('Preencha os dados do item corretamente.');
       return;
@@ -113,17 +114,50 @@ export class VendaFormComponent implements OnInit {
       return;
     }
 
-    if (quantidade > produtoSelecionado.quantidade) {
-      this.notification.warning(`Quantidade insuficiente em estoque. Disponível: ${produtoSelecionado.quantidade}`);
-      return;
+    // 2. Verifica se o produto já existe na lista de itens da venda
+    const itemExistente = this.itensVenda.find(item => item.produto.codproduto === produtoSelecionado.codproduto);
+
+    if (itemExistente) {
+      // --- CENÁRIO: PRODUTO JÁ EXISTE NA LISTA ---
+      
+      // Calcula a nova quantidade total (o que já tinha + o que está sendo adicionado)
+      const novaQuantidadeTotal = itemExistente.quantidade + quantidade;
+
+      // Valida o estoque considerando a SOMA das quantidades
+      if (novaQuantidadeTotal > produtoSelecionado.quantidade) {
+        this.notification.warning(
+          `Estoque insuficiente! Disponível: ${produtoSelecionado.quantidade}. ` +
+          `Você já tem ${itemExistente.quantidade} na lista e tentou adicionar mais ${quantidade}.`
+        );
+        return;
+      }
+
+      // Atualiza a quantidade do item existente em vez de criar um novo
+      itemExistente.quantidade = novaQuantidadeTotal;
+      
+      // Opcional: Atualizar o valor unitário se o usuário tiver alterado
+      // itemExistente.valor = valor; 
+
+      this.notification.info(`Quantidade do produto "${produtoSelecionado.nomeproduto}" atualizada para ${novaQuantidadeTotal}.`);
+
+    } else {
+      // --- CENÁRIO: PRODUTO NOVO NA LISTA ---
+
+      // Valida estoque normal
+      if (quantidade > produtoSelecionado.quantidade) {
+        this.notification.warning(`Quantidade insuficiente em estoque. Disponível: ${produtoSelecionado.quantidade}`);
+        return;
+      }
+
+      // Adiciona o novo item ao array
+      this.itensVenda.push({
+        produto: produtoSelecionado,
+        quantidade: quantidade,
+        valor: valor
+      });
     }
 
-    this.itensVenda.push({
-      produto: produtoSelecionado,
-      quantidade: quantidade,
-      valor: valor
-    });
-
+    // 3. Limpa o formulário para o próximo item
     this.itemForm.reset({
       produtoId: null,
       quantidade: 1,

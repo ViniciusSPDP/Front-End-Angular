@@ -7,9 +7,9 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule, RouterLink, RouterLinkActive],
   template: `
-    <div class="sidebar" [class.collapsed]="isCollapsed">
+<div class="sidebar" [class.collapsed]="isCollapsed">
       <div class="sidebar-header">
-        <div class="logo">
+        <div class="logo" routerLink="/" style="cursor: pointer;">
           <i class="material-icons">store</i>
           <span *ngIf="!isCollapsed">Comércio</span>
         </div>
@@ -17,7 +17,7 @@ import { CommonModule } from '@angular/common';
           <i class="material-icons">{{ isCollapsed ? 'chevron_right' : 'chevron_left' }}</i>
         </button>
       </div>
-
+      
       <nav class="sidebar-nav">
         <div class="nav-section">
           <div class="section-title" *ngIf="!isCollapsed">

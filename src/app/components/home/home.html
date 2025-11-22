@@ -1,0 +1,65 @@
+<div class="home-container">
+  <div class="welcome-section">
+    <h1>Bem-vindo ao Sistema de Comércio</h1>
+    <p>Gerencie suas vendas, clientes e produtos de forma simples e eficiente.</p>
+  </div>
+
+  <div class="dashboard-grid">
+    <mat-card class="dashboard-card sale-card">
+      <div class="card-icon">
+        <mat-icon>point_of_sale</mat-icon>
+      </div>
+      <h2>Nova Venda</h2>
+      <p>Registre uma venda, selecione clientes e produtos do estoque.</p>
+      <div class="card-actions">
+        <a routerLink="/vendas/novo" class="btn btn-primary full-width">
+          <i class="material-icons">add</i> Nova Venda
+        </a>
+      </div>
+    </mat-card>
+
+    <mat-card class="dashboard-card client-card">
+      <div class="card-icon">
+        <mat-icon>person_add</mat-icon>
+      </div>
+      <h2>Novo Cliente</h2>
+      <p>Cadastre novos clientes com endereço completo.</p>
+      <div class="card-actions">
+        <a routerLink="/clientes/novo" class="btn btn-primary full-width">
+          <i class="material-icons">add</i> Novo Cliente
+        </a>
+      </div>
+    </mat-card>
+
+    <mat-card class="dashboard-card product-card">
+      <div class="card-icon">
+        <mat-icon>inventory_2</mat-icon>
+      </div>
+      <h2>Novo Produto</h2>
+      <p>Adicione produtos ao estoque e defina preços.</p>
+      <div class="card-actions">
+        <a routerLink="/produtos/novo" class="btn btn-primary full-width">
+          <i class="material-icons">add</i> Novo Produto
+        </a>
+      </div>
+    </mat-card>
+  </div>
+
+  <div class="shortcuts-section">
+    <h3>Acesso Rápido às Listagens</h3>
+    <div class="chips-container">
+      <a routerLink="/vendas" class="shortcut-chip">
+        <mat-icon>list_alt</mat-icon> Ver Todas as Vendas
+      </a>
+      <a routerLink="/clientes" class="shortcut-chip">
+        <mat-icon>people</mat-icon> Ver Clientes
+      </a>
+      <a routerLink="/produtos" class="shortcut-chip">
+        <mat-icon>shopping_bag</mat-icon> Ver Estoque
+      </a>
+      <a routerLink="/marcas" class="shortcut-chip">
+        <mat-icon>label</mat-icon> Marcas
+      </a>
+    </div>
+  </div>
+</div>
