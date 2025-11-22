@@ -7,6 +7,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { VendaService, VendaForm, VendaProdutoForm } from '../../services/vendas';
 import { Cliente, ClienteService } from '../../services/cliente';
 import { Produto, ProdutoService } from '../../services/produto';
+import { NotificationService } from '../../services/notification';
 
 interface ItemVendaTela {
   produto: Produto;
@@ -40,7 +41,8 @@ export class VendaFormComponent implements OnInit {
     private router: Router,
     private vendaService: VendaService,
     private clienteService: ClienteService,
-    private produtoService: ProdutoService
+    private produtoService: ProdutoService,
+    private notification: NotificationService
   ) {
     this.form = this.fb.group({
       clienteId: [null, Validators.required]
@@ -62,15 +64,21 @@ export class VendaFormComponent implements OnInit {
       this.isEdit = true;
       this.vendaId = +id;
       
-      this.vendaService.getVenda(this.vendaId).subscribe(data => {
-        this.form.patchValue({ clienteId: data.cliente.codcliente });
-        
-        this.itensVenda = data.produtos.map(vp => ({
-          produto: vp.produto,
-          quantidade: vp.quantv,
-          valor: vp.valorv
-        }));
-      });
+      this.vendaService.getVenda(this.vendaId).subscribe(
+        data => {
+          this.form.patchValue({ clienteId: data.cliente.codcliente });
+          
+          this.itensVenda = data.produtos.map(vp => ({
+            produto: vp.produto,
+            quantidade: vp.quantv,
+            valor: vp.valorv
+          }));
+        },
+        error => {
+          console.error('Erro ao carregar Venda', error);
+          this.notification.error('Erro ao carregar dados da venda');
+        }
+      );
     }
 
     this.itemForm.get('produtoId')?.valueChanges.subscribe(produtoId => {
@@ -93,7 +101,7 @@ export class VendaFormComponent implements OnInit {
 
   adicionarItem(): void {
     if (this.itemForm.invalid) {
-      alert('Preencha os dados do item corretamente.');
+      this.notification.warning('Preencha os dados do item corretamente.');
       return;
     }
 
@@ -101,12 +109,12 @@ export class VendaFormComponent implements OnInit {
     const produtoSelecionado = this.produtos.find(p => p.codproduto == produtoId);
 
     if (!produtoSelecionado) {
-      alert('Produto selecionado não é válido.');
+      this.notification.warning('Produto selecionado não é válido.');
       return;
     }
 
     if (quantidade > produtoSelecionado.quantidade) {
-      alert(`Quantidade insuficiente em estoque. Disponível: ${produtoSelecionado.quantidade}`);
+      this.notification.warning(`Quantidade insuficiente em estoque. Disponível: ${produtoSelecionado.quantidade}`);
       return;
     }
 
@@ -133,11 +141,11 @@ export class VendaFormComponent implements OnInit {
 
   onSubmit(): void {
     if (this.form.invalid) {
-      alert('Selecione um cliente.');
+      this.notification.warning('Selecione um cliente.');
       return;
     }
     if (this.itensVenda.length === 0) {
-      alert('A venda deve conter pelo menos um produto.');
+      this.notification.warning('A venda deve conter pelo menos um produto.');
       return;
     }
 
@@ -153,15 +161,37 @@ export class VendaFormComponent implements OnInit {
     };
 
     if (this.isEdit && this.vendaId) {
-      this.vendaService.updateVenda(this.vendaId, vendaParaSalvar).subscribe(
-        () => this.router.navigate(['/vendas']),
-        error => console.error('Erro ao atualizar Venda', error)
-      );
+      this.vendaService.updateVenda(this.vendaId, vendaParaSalvar).subscribe({
+        next: () => {
+          this.notification.success('Venda atualizada com sucesso!');
+          setTimeout(() => this.router.navigate(['/vendas']), 1000);
+        },
+        error: (error) => {
+          console.error('Erro ao atualizar Venda', error);
+          if (error.status === 200 || error.status === 204) {
+            this.notification.success('Venda atualizada com sucesso!');
+            setTimeout(() => this.router.navigate(['/vendas']), 1000);
+          } else {
+            this.notification.error('Erro ao atualizar venda. Tente novamente.');
+          }
+        }
+      });
     } else {
-      this.vendaService.createVenda(vendaParaSalvar).subscribe(
-        () => this.router.navigate(['/vendas']),
-        error => console.error('Erro ao criar Venda', error)
-      );
+      this.vendaService.createVenda(vendaParaSalvar).subscribe({
+        next: () => {
+          this.notification.success('Venda cadastrada com sucesso!');
+          setTimeout(() => this.router.navigate(['/vendas']), 1000);
+        },
+        error: (error) => {
+          console.error('Erro ao criar Venda', error);
+          if (error.status === 200 || error.status === 201 || error.status === 204) {
+            this.notification.success('Venda cadastrada com sucesso!');
+            setTimeout(() => this.router.navigate(['/vendas']), 1000);
+          } else {
+            this.notification.error('Erro ao cadastrar venda. Tente novamente.');
+          }
+        }
+      });
     }
   }
 }

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TipoService, Tipo } from '../../services/tipo';
+import { NotificationService } from '../../services/notification';
 
 @Component({
   selector: 'app-tipo-form',
@@ -18,7 +19,8 @@ export class TipoFormComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private tipoService: TipoService
+    private tipoService: TipoService,
+    private notification: NotificationService
   ) { }
 
   ngOnInit(): void {
@@ -27,22 +29,52 @@ export class TipoFormComponent implements OnInit {
       this.isEdit = true;
       this.tipoService.getTipo(+id).subscribe(
         data => this.tipo = data,
-        error => console.error('Erro ao carregar Tipo', error)
+        error => {
+          console.error('Erro ao carregar Tipo', error);
+          this.notification.error('Erro ao carregar dados do tipo');
+        }
       );
     }
   }
 
   onSubmit(): void {
+    if (!this.tipo.nometipo || this.tipo.nometipo.trim() === '') {
+      this.notification.warning('Por favor, preencha o nome do tipo');
+      return;
+    }
+
     if (this.isEdit) {
-      this.tipoService.updateTipo(this.tipo.codtipo!, this.tipo).subscribe(
-        () => this.router.navigate(['/tipos']),
-        error => console.error('Erro ao atualizar Tipo', error)
-      );
+      this.tipoService.updateTipo(this.tipo.codtipo!, this.tipo).subscribe({
+        next: () => {
+          this.notification.success('Tipo atualizado com sucesso!');
+          setTimeout(() => this.router.navigate(['/tipos']), 1000);
+        },
+        error: (error) => {
+          console.error('Erro ao atualizar Tipo', error);
+          if (error.status === 200 || error.status === 204) {
+            this.notification.success('Tipo atualizado com sucesso!');
+            setTimeout(() => this.router.navigate(['/tipos']), 1000);
+          } else {
+            this.notification.error('Erro ao atualizar tipo. Tente novamente.');
+          }
+        }
+      });
     } else {
-      this.tipoService.createTipo(this.tipo).subscribe(
-        () => this.router.navigate(['/tipos']),
-        error => console.error('Erro ao criar Tipo', error)
-      );
+      this.tipoService.createTipo(this.tipo).subscribe({
+        next: () => {
+          this.notification.success('Tipo cadastrado com sucesso!');
+          setTimeout(() => this.router.navigate(['/tipos']), 1000);
+        },
+        error: (error) => {
+          console.error('Erro ao criar Tipo', error);
+          if (error.status === 200 || error.status === 201 || error.status === 204) {
+            this.notification.success('Tipo cadastrado com sucesso!');
+            setTimeout(() => this.router.navigate(['/tipos']), 1000);
+          } else {
+            this.notification.error('Erro ao cadastrar tipo. Tente novamente.');
+          }
+        }
+      });
     }
   }
 }

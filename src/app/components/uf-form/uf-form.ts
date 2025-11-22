@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { UfService, Uf } from '../../services/uf';
+import { NotificationService } from '../../services/notification';
 
 @Component({
   selector: 'app-uf-form',
@@ -18,7 +19,8 @@ export class UfFormComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private ufService: UfService
+    private ufService: UfService,
+    private notification: NotificationService
   ) { }
 
   ngOnInit(): void {
@@ -27,22 +29,52 @@ export class UfFormComponent implements OnInit {
       this.isEdit = true;
       this.ufService.getUf(+id).subscribe(
         data => this.uf = data,
-        error => console.error('Erro ao carregar UF', error)
+        error => {
+          console.error('Erro ao carregar UF', error);
+          this.notification.error('Erro ao carregar dados da UF');
+        }
       );
     }
   }
 
   onSubmit(): void {
+    if (!this.uf.nomeuf || this.uf.nomeuf.trim() === '' || !this.uf.siglauf || this.uf.siglauf.trim() === '') {
+      this.notification.warning('Por favor, preencha todos os campos obrigatórios');
+      return;
+    }
+
     if (this.isEdit) {
-      this.ufService.updateUf(this.uf.coduf!, this.uf).subscribe(
-        () => this.router.navigate(['/ufs']),
-        error => console.error('Erro ao atualizar UF', error)
-      );
+      this.ufService.updateUf(this.uf.coduf!, this.uf).subscribe({
+        next: () => {
+          this.notification.success('UF atualizada com sucesso!');
+          setTimeout(() => this.router.navigate(['/ufs']), 1000);
+        },
+        error: (error) => {
+          console.error('Erro ao atualizar UF', error);
+          if (error.status === 200 || error.status === 204) {
+            this.notification.success('UF atualizada com sucesso!');
+            setTimeout(() => this.router.navigate(['/ufs']), 1000);
+          } else {
+            this.notification.error('Erro ao atualizar UF. Tente novamente.');
+          }
+        }
+      });
     } else {
-      this.ufService.createUf(this.uf).subscribe(
-        () => this.router.navigate(['/ufs']),
-        error => console.error('Erro ao criar UF', error)
-      );
+      this.ufService.createUf(this.uf).subscribe({
+        next: () => {
+          this.notification.success('UF cadastrada com sucesso!');
+          setTimeout(() => this.router.navigate(['/ufs']), 1000);
+        },
+        error: (error) => {
+          console.error('Erro ao criar UF', error);
+          if (error.status === 200 || error.status === 201 || error.status === 204) {
+            this.notification.success('UF cadastrada com sucesso!');
+            setTimeout(() => this.router.navigate(['/ufs']), 1000);
+          } else {
+            this.notification.error('Erro ao cadastrar UF. Tente novamente.');
+          }
+        }
+      });
     }
   }
 }

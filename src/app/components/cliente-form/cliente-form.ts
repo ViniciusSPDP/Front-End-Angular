@@ -9,6 +9,7 @@ import { BairroService, Bairro } from '../../services/bairro';
 import { CidadeService, Cidade } from '../../services/cidade';
 import { RuaService, Rua } from '../../services/rua';
 import { CepService, Cep } from '../../services/cep';
+import { NotificationService } from '../../services/notification';
 
 @Component({
   selector: 'app-cliente-form',
@@ -39,7 +40,8 @@ export class ClienteFormComponent implements OnInit {
     private bairroService: BairroService,
     private cidadeService: CidadeService,
     private ruaService: RuaService,
-    private cepService: CepService
+    private cepService: CepService,
+    private notification: NotificationService
   ) {
     this.form = this.fb.group({
       nomecliente: ['', Validators.required],
@@ -77,7 +79,10 @@ export class ClienteFormComponent implements OnInit {
             cep: data.cep.codcep
           });
         },
-        error => console.error('Erro ao carregar Cliente', error)
+        error => {
+          console.error('Erro ao carregar Cliente', error);
+          this.notification.error('Erro ao carregar dados do cliente');
+        }
       );
     }
   }
@@ -100,7 +105,7 @@ export class ClienteFormComponent implements OnInit {
 
   onSubmit(): void {
     if (this.form.invalid) {
-      alert('Por favor, preencha todos os campos obrigatórios.');
+      this.notification.warning('Por favor, preencha todos os campos obrigatórios');
       return;
     }
 
@@ -116,15 +121,37 @@ export class ClienteFormComponent implements OnInit {
     };
 
     if (this.isEdit) {
-      this.clienteService.updateCliente(this.clienteId!, cliente).subscribe(
-        () => this.router.navigate(['/clientes']),
-        error => console.error('Erro ao atualizar Cliente', error)
-      );
+      this.clienteService.updateCliente(this.clienteId!, cliente).subscribe({
+        next: () => {
+          this.notification.success('Cliente atualizado com sucesso!');
+          setTimeout(() => this.router.navigate(['/clientes']), 1000);
+        },
+        error: (error) => {
+          console.error('Erro ao atualizar Cliente', error);
+          if (error.status === 200 || error.status === 204) {
+            this.notification.success('Cliente atualizado com sucesso!');
+            setTimeout(() => this.router.navigate(['/clientes']), 1000);
+          } else {
+            this.notification.error('Erro ao atualizar cliente. Tente novamente.');
+          }
+        }
+      });
     } else {
-      this.clienteService.createCliente(cliente).subscribe(
-        () => this.router.navigate(['/clientes']),
-        error => console.error('Erro ao criar Cliente', error)
-      );
+      this.clienteService.createCliente(cliente).subscribe({
+        next: () => {
+          this.notification.success('Cliente cadastrado com sucesso!');
+          setTimeout(() => this.router.navigate(['/clientes']), 1000);
+        },
+        error: (error) => {
+          console.error('Erro ao criar Cliente', error);
+          if (error.status === 200 || error.status === 201 || error.status === 204) {
+            this.notification.success('Cliente cadastrado com sucesso!');
+            setTimeout(() => this.router.navigate(['/clientes']), 1000);
+          } else {
+            this.notification.error('Erro ao cadastrar cliente. Tente novamente.');
+          }
+        }
+      });
     }
   }
 }

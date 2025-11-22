@@ -5,6 +5,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ProdutoService, Produto } from '../../services/produto';
 import { MarcaService, Marca } from '../../services/marca';
 import { TipoService, Tipo } from '../../services/tipo';
+import { NotificationService } from '../../services/notification';
 
 @Component({
   selector: 'app-produto-form',
@@ -33,7 +34,8 @@ export class ProdutoFormComponent implements OnInit {
     private router: Router,
     private produtoService: ProdutoService,
     private marcaService: MarcaService,
-    private tipoService: TipoService
+    private tipoService: TipoService,
+    private notification: NotificationService
   ) { }
 
   ngOnInit(): void {
@@ -45,7 +47,10 @@ export class ProdutoFormComponent implements OnInit {
       this.isEdit = true;
       this.produtoService.getProduto(+id).subscribe(
         data => this.produto = data,
-        error => console.error('Erro ao carregar Produto', error)
+        error => {
+          console.error('Erro ao carregar Produto', error);
+          this.notification.error('Erro ao carregar dados do produto');
+        }
       );
     }
   }
@@ -58,19 +63,47 @@ export class ProdutoFormComponent implements OnInit {
   }
 
   onSubmit(): void {
+    // Validação manual
+    if (!this.produto.nomeproduto || this.produto.valor === undefined || this.produto.quantidade === undefined || !this.produto.marca?.codmarca || !this.produto.tipo?.codtipo) {
+      this.notification.warning('Por favor, preencha todos os campos obrigatórios');
+      return;
+    }
+
     this.produto.marca = { codmarca: this.produto.marca.codmarca } as Marca;
     this.produto.tipo = { codtipo: this.produto.tipo.codtipo } as Tipo;
 
     if (this.isEdit) {
-      this.produtoService.updateProduto(this.produto.codproduto!, this.produto).subscribe(
-        () => this.router.navigate(['/produtos']),
-        error => console.error('Erro ao atualizar Produto', error)
-      );
+      this.produtoService.updateProduto(this.produto.codproduto!, this.produto).subscribe({
+        next: () => {
+          this.notification.success('Produto atualizado com sucesso!');
+          setTimeout(() => this.router.navigate(['/produtos']), 1000);
+        },
+        error: (error) => {
+          console.error('Erro ao atualizar Produto', error);
+          if (error.status === 200 || error.status === 204) {
+            this.notification.success('Produto atualizado com sucesso!');
+            setTimeout(() => this.router.navigate(['/produtos']), 1000);
+          } else {
+            this.notification.error('Erro ao atualizar produto. Tente novamente.');
+          }
+        }
+      });
     } else {
-      this.produtoService.createProduto(this.produto).subscribe(
-        () => this.router.navigate(['/produtos']),
-        error => console.error('Erro ao criar Produto', error)
-      );
+      this.produtoService.createProduto(this.produto).subscribe({
+        next: () => {
+          this.notification.success('Produto cadastrado com sucesso!');
+          setTimeout(() => this.router.navigate(['/produtos']), 1000);
+        },
+        error: (error) => {
+          console.error('Erro ao criar Produto', error);
+          if (error.status === 200 || error.status === 201 || error.status === 204) {
+            this.notification.success('Produto cadastrado com sucesso!');
+            setTimeout(() => this.router.navigate(['/produtos']), 1000);
+          } else {
+            this.notification.error('Erro ao cadastrar produto. Tente novamente.');
+          }
+        }
+      });
     }
   }
 }
