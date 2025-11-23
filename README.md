@@ -1,59 +1,89 @@
-# FrontEndSpring
+# Front-End para Aplicação Spring
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.2.1.
+Este é um projeto front-end desenvolvido com Angular para gerenciar diversas entidades de um sistema de vendas, como clientes, produtos e vendas. O projeto utiliza Angular Material para os componentes de UI.
 
-## Development server
+## 📜 Descrição
 
-To start a local development server, run:
+A aplicação consiste em uma interface para realizar operações de CRUD (Criar, Ler, Atualizar e Deletar) para as seguintes entidades:
 
-```bash
-ng serve
+- Bairros
+- CEPs
+- Cidades
+- Clientes
+- Marcas
+- Produtos
+- Ruas
+- Sexos
+- Tipos de Produto
+- UFs (Estados)
+- Vendas
+
+## ✨ Funcionalidades
+
+- Listagem e visualização das entidades.
+- Criação de novos registros para cada entidade.
+- Edição de registros existentes.
+- Exclusão de registros.
+- Interface reativa e amigável construída com Angular Material.
+
+## 🚀 Tecnologias Utilizadas
+
+- [Angular](https://angular.io/) (v20.2.0)
+- [TypeScript](https://www.typescriptlang.org/) (v5.9.2)
+- [Angular Material](https://material.angular.io/) (v20.2.0)
+- [SCSS](https://sass-lang.com/) para estilização.
+- [RxJS](https://rxjs.dev/) para programação reativa.
+
+## ⚙️ Primeiros Passos
+
+Siga as instruções abaixo para configurar e executar o projeto em seu ambiente de desenvolvimento.
+
+### Pré-requisitos
+
+Certifique-se de ter o [Node.js](https://nodejs.org/) (que inclui o npm) e o [Angular CLI](https://angular.io/cli) instalados em sua máquina.
+
+- Node.js (versão recomendada: 20.x ou superior)
+- Angular CLI (versão correspondente ao projeto: 20.2.1)
+
+### Instalação
+
+1.  Clone o repositório para a sua máquina local:
+    ```sh
+    git clone https://github.com/seu-usuario/front-end-angular.git
+    ```
+2.  Navegue até o diretório do projeto:
+    ```sh
+    cd front-end-angular
+    ```
+3.  Instale as dependências do projeto:
+    ```sh
+    npm install
+    ```
+
+## ▶️ Executando a Aplicação
+
+Após a instalação das dependências, você pode iniciar o servidor de desenvolvimento.
+
+```sh
+npm start
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+O comando `npm start` (ou `ng serve`) compila a aplicação e a serve em `http://localhost:4200/`. A aplicação será recarregada automaticamente se você alterar qualquer um dos arquivos de origem.
 
-## Code scaffolding
+## 📦 Build
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Para criar uma versão de produção da aplicação, execute o seguinte comando:
 
-```bash
-ng generate component component-name
+```sh
+npm run build
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+O comando `npm run build` (ou `ng build`) compila a aplicação para produção. Os artefatos da compilação serão armazenados no diretório `dist/`.
 
-```bash
-ng generate --help
+## ✅ Testes
+
+Para executar os testes unitários via [Karma](https://karma-runner.github.io), utilize o comando:
+
+```sh
+npm test
 ```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
